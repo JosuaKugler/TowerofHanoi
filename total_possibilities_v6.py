@@ -1,10 +1,6 @@
-## TODO: get all FS algorithm possibilities and count them (compare with adjustedUpsilon)
-
-############################################################
-
 import pprint
 import os
-#from Anzahl_Zugfolgen import adjustedUpsilon
+import sys
 
 def faculty(x):
     """
@@ -17,7 +13,6 @@ def faculty(x):
         value *= i
     return int(value)
 
-
 def bk(n, k):
     """
     returns 'n over k'
@@ -28,7 +23,6 @@ def bk(n, k):
         return 0
     value = faculty(n) / (faculty(k) * faculty(n - k))
     return int(value)
-
 
 def t_(n, k):
     """
@@ -41,7 +35,6 @@ def t_(n, k):
         x = bk(k-2+t, k-2)
     return t
 
-
 def formula(n, k, t):
     """
     returns the minimum number of moves for increment 2^t, k pegs and n disks
@@ -53,7 +46,6 @@ def formula(n, k, t):
         x = x + 2**i*bk(i+k-3, k-3)
     correction = 2**t*(n-bk(t+k-2, k-2))
     return x + correction
-
 
 def M(n, k):
     """
@@ -99,7 +91,6 @@ def upperbound(A,t,k):
     helper function for adjustedUpsilon
     """
     return int(min([A,b_(1,t,k)]))
-
 
 def upsilon(n,k):
     """
@@ -334,6 +325,7 @@ class TH():
     - self.movenumber: the number of moves that is needed to get to this configuration
     - self.normalizedconfiguration: a configuration where the pegs are sorted according to their biggest disk
     """
+
     def __init__(self, disks, pegs, configurationdict = None, history = []):
         """
         initializes a TH
@@ -572,11 +564,7 @@ def comparevalues(nmax, kmax):
             print(adjustedUpsilon(n,k), end = "|")
         print("")
 
-if True:
-    import sys
+if __name__ == "__main__":
     disks = int(sys.argv[1])
     pegs = int(sys.argv[2])
-    #comparevalues(disks, pegs)
     nktable(disks,pegs, sort = "totalpossibilities")
-
-    #print(success_instances)
