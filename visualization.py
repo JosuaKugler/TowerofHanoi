@@ -77,6 +77,7 @@ def showhistory(THobject):
         lines.append(r"\newpage")
     lines.append(r"\end{document}")
     compile(lines, "some_text_file")
+    return lines, "some_text_file"
 
 def showconfigurations(configurations):
     """
@@ -93,6 +94,7 @@ def showconfigurations(configurations):
                 lines.append(line)
     lines.append(r"\end{document}")
     compile(lines, "some_text_file")
+    return lines, "some_text_file"
 
 
 def nktable(nmax, kmax, sort = "value"):
@@ -146,3 +148,12 @@ def nktable(nmax, kmax, sort = "value"):
     lines.append(r"\end{document}")
     name = str(n)+"_"+str(k)+sort+"_table"
     compile(lines, name)
+    return lines, name
+
+def visualize(type, data):
+    """
+    the visualize function aims to be the general function to visualize everything.
+    Simply describe the type of visualization you want and pass the data you want to visualize to data.
+    """
+    if type == "config":
+        pass
