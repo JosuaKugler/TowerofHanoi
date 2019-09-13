@@ -2,57 +2,64 @@ import os
 from total_possibilities import *
 from help_calculate import *
 
-def disksizefactor(n, disk):
+def gentikz(configurationdict):
     """
-    a helper function for gentikz
+    returns the code for a tikzpicture as a list, where each element is one line
+    the compiled tikzpicture shows a tower of Hanoi with a configuration as in configurationdict
     """
-    return 0.49 - disk * 0.4/n
+    #compute n and k
+    peglist = []
+    disklist = []
+    for peg in configurationdict:
+        peglist.append(peg)
+        for disk in configurationdict[peg]:
+            disklist.append(disk)
+    n = len(disklist)
+    k = len(peglist)
 
-def gentikz(configlist):
-    """erstellt den tikz-code für eine configuration aus configlist[2],
-    wobei es sich hier um ein dict folgenden Aufbaus handelt:
-    {peg:[liste mit scheiben],  etc.}
-    """
-    n = configlist[0]
-    k = configlist[1]
-    diskdict = configlist[2]
-    lineslist = [r"\begin{tikzpicture}"]
-    diskheight = min(10, 130/n)
-    lineslist.append(
-        r"\pgfmathsetlengthmacro\diskheight{" + str(diskheight)+r"};")
-    lineslist.append(r"\pgfmathsetmacro\k{"+str(k)+r"};")
-    lineslist.append(r"\pgfmathsetlengthmacro\step{\textwidth/\k};")
-    lineslist.append(
-        r"\draw[color = white] (\step/2,0) -- (\textwidth+\step,0);")
-    lineslist.append(
-        r"\foreach \n in {1,...,\k} \draw [fill = brown, draw = black, rounded corners = \step/20] (\step*\n,0) rectangle (\step*\n+\step/10,3);")
-    usable_pegs = k+1
+    lineslist = [r"\begin{tikzpicture}",
+    r"\pgfmathsetlengthmacro\diskheight{" + str(min(10, 130/n))+r"};",
+    r"\pgfmathsetmacro\k{"+str(k)+r"};", #define k in latex so it is easier to read
+    r"\pgfmathsetlengthmacro\step{\textwidth/\k};",#define step which is simply the width divided by k
+    r"\draw[color = white] (\step/2,0) -- (\textwidth+\step,0);",#make some space at the sides
+    r"\foreach \n in {1,...,\k} \draw [fill = brown, draw = black, rounded corners = \step/20] (\step*\n,0) rectangle (\step*\n+\step/10,3);"#draw the pegs
+    ]
     if False:
-        for peg in diskdict:
-            disklist = diskdict[peg]
-            if peg != 1 and peg != k:
+        usable_pegs = k+1
+        for peg in configurationdict:
+            disklist = configurationdict[peg]
+            if peg != 0 and peg != k-1:
                 usable_pegs -= 1
                 pegheight = len(disklist)
                 lineslist.append(r"\node ("+str(peg)+r") at (\step*"+str(peg+1/20)+r",-0.5){M("+str(pegheight)+","+str(usable_pegs)+")="+str(M(pegheight, usable_pegs))+r"};")
                 lineslist.append(r"\node ("+str(peg)+r") at (\step*"+str(peg+1/20)+r",-1){I("+str(pegheight)+","+str(usable_pegs)+")="+str(2**t_(pegheight, usable_pegs))+r"};")
-    for peg in diskdict:
-        if diskdict[peg] != []:
+    for peg in configurationdict:
+        if configurationdict[peg] != []:
             peglineslist = []
-            disklist = diskdict[peg]
+            disklist = configurationdict[peg]
+            disklist.reverse()
             for number, disk in enumerate(disklist):
                 diskline = [r"\definecolor{mycolor}{rgb:hsb}{" + str("%.2f" % round((disk/n)*0.8, 3)) +
                             r",1,0.8}",
-                            r"\draw [fill = mycolor, draw = black, rounded corners = \diskheight/2] (\step*"+str(peg) +
-                            r"+\step/20-\step*"+str(disksizefactor(n, disk)) +
+                            r"\draw [fill = mycolor, draw = black, rounded corners = \diskheight/2] (\step*"+str(peg+1) +
+                            r"+\step/20-\step*"+str((disk+1)*0.4/n) +
                             r",\diskheight*"+str(number) +
-                            r") rectangle (\step*"+str(peg) +
-                            r"+\step/20+\step*"+str(disksizefactor(n, disk)) +
+                            r") rectangle (\step*"+str(peg+1) +
+                            r"+\step/20+\step*"+str((disk+1)*0.4/n) +
                             r",\diskheight*"+str(number+1)+r");"]
                 peglineslist += diskline
             lineslist += peglineslist
 
     lineslist += [r"\end{tikzpicture}"]
     return lineslist
+
+def compile(lines, name):
+    with open("{}.tex".format(name), "w") as f:
+        for line in lines:
+            f.write(line+"\n")
+    os.system("pdflatex {}.tex".format(name))
+    os.system("xdg-open {}.pdf".format(name))
+
 
 def showhistory(THobject):
     """
@@ -61,65 +68,32 @@ def showhistory(THobject):
     history = THobject.history
     tikzlist = []
     for configuration in history:
-        newconfiguration = {}
-        for peg in configuration:
-            newconfiguration[peg+1] = []
-        for peg in newconfiguration:
-            for disk in configuration[peg-1]:
-                newconfiguration[peg].append(THobject.disks-disk)
-        for peg in newconfiguration:
-            newconfiguration[peg].reverse()
-        configlist = [THobject.disks, THobject.pegs,newconfiguration]
-        tikzlist.append(gentikz(configlist))
-    with open("some_text_file.tex", "w") as f:
-        totallines = [r"\documentclass[tikz]{standalone}",
-                      r"\usepackage{xcolor}", r"\usepackage{tikz,pgf}", r"\begin{document}"]
-        for tikzpicture in tikzlist:
-            for line in tikzpicture:
-                totallines.append(line)
-            totallines.append(r"\newpage")
-        totallines.append(r"\end{document}")
-        for line in totallines:
-            f.write(line+"\n")
-    os.system("pdflatex some_text_file.tex")
-    os.system("xdg-open some_text_file.pdf")
+        tikzlist.append(gentikz(configuration.copy()))
+    lines = [r"\documentclass[tikz]{standalone}",
+                  r"\usepackage{xcolor}", r"\usepackage{tikz,pgf}", r"\begin{document}"]
+    for tikzpicture in tikzlist:
+        for line in tikzpicture:
+            lines.append(line)
+        lines.append(r"\newpage")
+    lines.append(r"\end{document}")
+    compile(lines, "some_text_file")
 
 def showconfigurations(configurations):
     """
     visualizes configurations
     where configurations = {1:[list of configurations], 2:[list of configurations], ...}
     """
-    totallines = [r"\documentclass[tikz]{standalone}",
+    lines = [r"\documentclass[tikz]{standalone}",
                   r"\usepackage{xcolor}", r"\usepackage{tikz,pgf}", r"\begin{document}"]
     for movenumber in configurations:
-        totallines.append(str(movenumber))
+        lines.append(str(movenumber))
         for configuration in configurations[movenumber]:
-            peglist = []
-            disklist = []
-            for peg in configuration:
-                peglist.append(peg)
-                for disk in configuration[peg]:
-                    disklist.append(disk)
-            disks = len(disklist)
-            pegs = len(peglist)
-            newconfiguration = {}
-            for peg in configuration:
-                newconfiguration[peg+1] = []
-            for peg in newconfiguration:
-                for disk in configuration[peg-1]:
-                    newconfiguration[peg].append(disks-disk)
-            for peg in newconfiguration:
-                newconfiguration[peg].reverse()
-            configlist = [disks, pegs,newconfiguration]
-            tikzcode = gentikz(configlist)
+            tikzcode = gentikz(configuration.copy())
             for line in tikzcode:
-                totallines.append(line)
-    totallines.append(r"\end{document}")
-    with open("some_text_file.txt", "w") as f:
-        for line in totallines:
-            f.write(line+"\n")
-    os.system("pdflatex some_text_file.txt")
-    os.system("xdg-open some_text_file.pdf")
+                lines.append(line)
+    lines.append(r"\end{document}")
+    compile(lines, "some_text_file")
+
 
 def nktable(nmax, kmax, sort = "value"):
     """
@@ -132,7 +106,7 @@ def nktable(nmax, kmax, sort = "value"):
     our first (wrong) conjecture with the FS-algorithm/our adjusted conjecture for the FS-algorithm/the bruteforce method
     """
     number_of_columns = nmax
-    linelist = [r"\documentclass{article}", r"\usepackage[left = 0 cm, top = 0cm]{geometry}", r"\begin{document}"]
+    lines = [r"\documentclass{article}", r"\usepackage[left = 0 cm, top = 0cm]{geometry}", r"\begin{document}"]
     firstline = r"\begin{tabular}{"
     secondline = r"&\multicolumn{"+str(nmax)+ r"}{|c}{Scheibenzahl $n$}\\"
     i = 0
@@ -143,17 +117,17 @@ def nktable(nmax, kmax, sort = "value"):
         firstline += "c"
     firstline += "}"
     hline = r"\hline"
-    linelist.append(firstline)
-    linelist.append(secondline)
+    lines.append(firstline)
+    lines.append(secondline)
     line = r"$k\downarrow$"
     for n in range(1,nmax+1):
         line += "&"+str(n)
 
     for k in range(3,kmax+1):
         line += r"\\"
-        linelist.append(line)
+        lines.append(line)
         if k == 3:
-            linelist.append(hline)
+            lines.append(hline)
         line = str(k)
         for n in range(1,nmax+1):
             if sort == "value":
@@ -167,14 +141,8 @@ def nktable(nmax, kmax, sort = "value"):
             elif sort == "adjustedpossibilities":
                 line += "&"+str(adjustedUpsilon(n,k))
 
-    linelist.append(line)
-    linelist.append(r"\end{tabular}")
-    linelist.append(r"\end{document}")
+    lines.append(line)
+    lines.append(r"\end{tabular}")
+    lines.append(r"\end{document}")
     name = str(n)+"_"+str(k)+sort+"_table"
-    dateiname=name+".tex"
-    f=open(dateiname,"w")
-    for line in linelist:
-        f.write(line+"\n")
-    f.close()
-    os.system("pdflatex -quiet {}".format(dateiname))
-    os.system("xdg-open {}.pdf".format(name))
+    compile(lines, name)

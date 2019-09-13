@@ -20,4 +20,6 @@ def comparevalues(nmax, kmax):
 if __name__ == "__main__":
     disks = int(sys.argv[1])
     pegs = int(sys.argv[2])
-    nktable(disks,pegs, sort = "totalpossibilities")
+    success_instances = bruteforce(disks, pegs)
+    showhistory(success_instances[0])
+    #print(success_instances[0])

@@ -244,6 +244,7 @@ def bruteforce(disks, pegs):
         thismvconfigs = configurations[mv]
         for THobject in thismvconfigs:
             tryallpossibilities(THobject)
+    return success_instances
 
 def totalpossibilities(disks, pegs):
     """
