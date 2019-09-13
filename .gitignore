@@ -1,5 +1,7 @@
 #this is my first .gitgnore file for the Tower of Hanoi project
-#first of all ignore all latex log, aux output or even tex files created by my python scripts
+#first of all ignore all latex log, aux output or even tex files created by my python scripts as well as pycache or compiled python stuff
+__pycache__/
+*.pyc
 *.log
 *.aux
 *.pdf
