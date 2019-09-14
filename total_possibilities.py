@@ -24,6 +24,8 @@ class TH():
     - self.history: a list with the configurationdicts of previous THs leading to this instance
     - self.movenumber: the number of moves that is needed to get to this configuration
     - self.normalizedconfiguration: a configuration where the pegs are sorted according to their biggest disk
+    and the function move to realize manual moving
+
     """
 
     def __init__(self, disks, pegs, configurationdict = None, history = []):
@@ -52,6 +54,19 @@ class TH():
         for element in self.history:
             string += str(element) + "\n        "
         return string
+
+    def move(movelist):
+        """
+        pass this function a move in the following format: [disk, startpeg, endpeg]
+        """
+        disk = movelist[0]
+        startpeg = movelist[1]
+        endpeg = movelist[2]
+        newconfiguration = self.configurationdict.copy()
+        newconfiguration[startpeg].remove(disk)
+        newconfiguration[endpeg].append(disk)
+        self.history.append(newconfiguration)
+        self.configurationdict = newconfiguration
 
 def process(THobject):
     """
@@ -235,7 +250,7 @@ def bruteforce(disks, pegs):
     success_instances = []
     ST = TH(disks,pegs)
     configurations[0] = [ST]
-    process(ST)
+    #process(ST)
     tryallpossibilities(ST)
     #now all possibilities for mv = 1 are created and saved if valid.
     #We can therefore iterate over all of them to create the possibilities of mv = 2 and so on

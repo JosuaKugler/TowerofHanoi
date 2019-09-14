@@ -62,6 +62,8 @@ def compile(lines, name):
             f.write(line+"\n")
     os.system("pdflatex {}.tex".format(name))
     os.system("xdg-open {}.pdf".format(name))
+    os.system("rm {}.log".format(name))
+    os.system("rm {}.aux".format(name))
 
 
 def showlist(liste):

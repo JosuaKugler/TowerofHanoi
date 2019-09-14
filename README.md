@@ -6,10 +6,9 @@ The bruteforce function simply tries all possibilities and finds the possibiliti
 
 The adjustedUpsilon function computes the number of possibilities for solving the problem with the Frame-Stewart algorithm.
 
-In addition, there are several nice visualization functions that help to imagine the different ways of solving the Towers of Hanoi,
-however, they require latex.
+In addition, there is a visualize function that can visualize different types of data and create e.g. Tower of Hanoi pictures or tables with values.
 
 Ideas for things to add:
 Python scripts that create a regular movesequence (also adding variances to those scipts in order to verify adjustedUpsilon)
 Creating a movesequence out of TH.history
-Complete the visualize function and make it intuitively usable (also add ability to plot a movesequence)
+Add ability to plot a movesequence to visualize

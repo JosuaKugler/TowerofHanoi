@@ -21,5 +21,5 @@ if __name__ == "__main__":
     disks = int(sys.argv[1])
     pegs = int(sys.argv[2])
     success_instances = bruteforce(disks, pegs)
-    showhistory(success_instances[0])
+    visualize(('list', success_instances[0].history))
     #print(success_instances[0])
