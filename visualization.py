@@ -54,6 +54,9 @@ def gentikz(configurationdict):
     return lineslist
 
 def compile(lines, name):
+    """
+    compile lines and use a file with name as tex-file
+    """
     with open("{}.tex".format(name), "w") as f:
         for line in lines:
             f.write(line+"\n")
@@ -61,40 +64,41 @@ def compile(lines, name):
     os.system("xdg-open {}.pdf".format(name))
 
 
-def showhistory(THobject):
+def showlist(liste):
     """
-    creates a pdf with all steps of creating the current configuration of THobject
+    helper function for visualize
     """
-    history = THobject.history
-    tikzlist = []
-    for configuration in history:
-        tikzlist.append(gentikz(configuration.copy()))
-    lines = [r"\documentclass[tikz]{standalone}",
-                  r"\usepackage{xcolor}", r"\usepackage{tikz,pgf}", r"\begin{document}"]
-    for tikzpicture in tikzlist:
-        for line in tikzpicture:
+    lines = []
+    for configuration in liste:
+        for line in gentikz(configuration.copy()):
             lines.append(line)
         lines.append(r"\newpage")
-    lines.append(r"\end{document}")
-    compile(lines, "some_text_file")
-    return lines, "some_text_file"
+    return lines
 
 def showconfigurations(configurations):
     """
-    visualizes configurations
-    where configurations = {1:[list of configurations], 2:[list of configurations], ...}
+    helper function for visualize
     """
-    lines = [r"\documentclass[tikz]{standalone}",
-                  r"\usepackage{xcolor}", r"\usepackage{tikz,pgf}", r"\begin{document}"]
+    lines = []
     for movenumber in configurations:
         lines.append(str(movenumber))
         for configuration in configurations[movenumber]:
             tikzcode = gentikz(configuration.copy())
             for line in tikzcode:
                 lines.append(line)
+    return lines
+
+def showconfig(config):
+    """
+    visualizes one configuration given by configurationdict
+    """
+    lines = [r"\documentclass[tikz]{standalone}",
+                  r"\usepackage{xcolor}", r"\usepackage{tikz,pgf}", r"\begin{document}"]
+    newlines = gentikz(config)
+    for line in newlines:
+        lines.append(line)
     lines.append(r"\end{document}")
-    compile(lines, "some_text_file")
-    return lines, "some_text_file"
+    return lines
 
 
 def nktable(nmax, kmax, sort = "value"):
@@ -108,7 +112,6 @@ def nktable(nmax, kmax, sort = "value"):
     our first (wrong) conjecture with the FS-algorithm/our adjusted conjecture for the FS-algorithm/the bruteforce method
     """
     number_of_columns = nmax
-    lines = [r"\documentclass{article}", r"\usepackage[left = 0 cm, top = 0cm]{geometry}", r"\begin{document}"]
     firstline = r"\begin{tabular}{"
     secondline = r"&\multicolumn{"+str(nmax)+ r"}{|c}{Scheibenzahl $n$}\\"
     i = 0
@@ -119,7 +122,7 @@ def nktable(nmax, kmax, sort = "value"):
         firstline += "c"
     firstline += "}"
     hline = r"\hline"
-    lines.append(firstline)
+    lines = [firstline]
     lines.append(secondline)
     line = r"$k\downarrow$"
     for n in range(1,nmax+1):
@@ -145,15 +148,128 @@ def nktable(nmax, kmax, sort = "value"):
 
     lines.append(line)
     lines.append(r"\end{tabular}")
-    lines.append(r"\end{document}")
-    name = str(n)+"_"+str(k)+sort+"_table"
-    compile(lines, name)
-    return lines, name
+    return lines
 
-def visualize(type, data):
+def checkdataformat(description, data):
+    correct = True
+    if description == "config":
+        if type(data) != dict:
+            correct = False
+        else:
+            for key in data:
+                if type(key) != int:
+                    correct = False
+                dictelement = data[key]
+                if type(dictelement) != list:
+                    correct = False
+                else:
+                    for listelement in dictelement:
+                        if type(listelement) != int:
+                            correct = False
+    elif description == "list":
+        if type(data) != list:
+            correct = False
+        else:
+            for listelement in data:
+                if not checkdataformat('config', listelement):
+                    correct = False
+
+    elif description == "configurations":
+        if type(data) != dict:
+            correct = False
+        else:
+            for key in data:
+                if type(key) != int:
+                    correct = False
+                dictelement = data[key]
+                if not checkdataformat('list', dictelement):
+                    correct = False
+    elif description == "ptable" or description == "totalptable" or description == "incrementtable" or description == "movetable":
+        if type(data) != list:
+            correct = False
+        elif len(data) != 2:
+            correct = False
+        elif type(data[0])!= int or type(data[1])!= int:
+            correct = False
+    else:
+        print("unknown description, can't check")
+    return correct
+
+def visualize(*stuff, **options):
     """
     the visualize function aims to be the general function to visualize everything.
-    Simply describe the type of visualization you want and pass the data you want to visualize to data.
+    pass tupels (description, data) to it. All tupels that are mentioned in one function call are put into one pdf.
+
+    ##################################################################
+    #descriptions for the (description, data) tupel
+    description='config':
+        visualize a single configurationdict
+        configurationdict := {peg1:[disk1, disk2],peg2:[disk3,disk4], ...} where disks and pegs are ints
+
+    description='list':
+        visualize a list of multiple configurationdict, useful for TH.history
+
+    description='configurations':
+        visualize a dict with integers as keys and lists as objects
+
+    description='movetable':
+        table with M(n,k) where data[0] is the maximal 'n' and data[1] is the maximal 'k'
+
+    description='incrementtable':
+        table with I(n,k) where data[0] is the maximal 'n' and data[1] is the maximal 'k'
+
+    description='totalptable':
+        table with totalpossibilities(n,k) where data[0] is the maximal 'n' and data[1] is the maximal 'k'
+
+    description='ptable':
+        table with adjustedpossibilities(n,k) where data[0] is the maximal 'n' and data[1] is the maximal 'k'
+
+    ##############################################################################################
+    #keywords:
+    separate: pass a latex command as string to this argument. It is called after each (description, data)-tupel.
+        default r"\\newpage"
+
+    name: file basename to write tex-code on it.
+        default "some_text_file"
+
+    ##############################################################################################
+    example:
+        visualize(('config', {0:[1,2,3],1:[4,5],2:[6],3:[]}),('movetable',[5,5]),('totalptable',[5,5]), separate = r"\par")
     """
-    if type == "config":
-        pass
+    separate = r"\newpage" #by default, a new tupel is put on a new page
+    name = "some_text_file" #by default this file is used
+    for key in options:
+        if key == "separate":
+            separate = options[key]
+        if key == "name":
+            name = options[key]
+
+    totallines = [r"\documentclass{article}", r"\usepackage{xcolor}", r"\usepackage{tikz,pgf}", r"\usepackage[left = 2 cm, top = 2cm]{geometry}", r"\begin{document}"]
+    for ddtupel in stuff:
+        description = ddtupel[0]
+        data = ddtupel[1]
+        if checkdataformat(description, data):
+            if description == "config":
+                lines = gentikz(data)
+            elif description == "list":
+                lines = showlist(data)
+            elif description == "configurations":
+                lines = showconfigurations(data)
+            elif description == "movetable":
+                lines = nktable(data[0], data[1], sort = 'value')
+            elif description == "incrementtable":
+                lines = nktable(data[0], data[1], sort = 'increment')
+            elif description == "totalptable":
+                lines = nktable(data[0], data[1], sort = 'totalpossibilities')
+            elif description == "ptable":
+                lines = nktable(data[0], data[1], sort = 'adjustedpossibilities')
+            else:
+                print("unknown description")
+                lines = []
+            for line in lines:
+                totallines.append(line)
+            totallines.append(separate)
+        else:
+            print("data doesn't match description, please read help(visualization)")
+    totallines.append(r"\end{document}")
+    compile(totallines, name)
