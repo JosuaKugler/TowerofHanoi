@@ -3,6 +3,7 @@ import pprint
 from visualization import *
 from help_calculate import *
 from total_possibilities import *
+from moves_FS import *
 
 def comparevalues(nmax, kmax):
     """
@@ -20,6 +21,13 @@ def comparevalues(nmax, kmax):
 if __name__ == "__main__":
     disks = int(sys.argv[1])
     pegs = int(sys.argv[2])
-    success_instances = bruteforce(disks, pegs)
-    visualize(('list', success_instances[0].history))
+    moves = movessequence_ui(disks, pegs)
+    ST = TH(disks, pegs)
+    print(moves)
+    for movelist in moves:
+        ST.move(movelist)
+    #print(ST.history)
+    #visualize(('list', ST.history))
+    #success_instances = bruteforce(disks, pegs)
+    #visualize(('list', success_instances[0].history))
     #print(success_instances[0])

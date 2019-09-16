@@ -1,15 +1,17 @@
 # IDEA: write a calculatemiddletower function that returns all possible pegheightdicts.
 #Then use movessequence method on each of them.
 #Somehow use structure from totalpossibilities with TH objects.
+# NOTE: bigger number, bigger disk
 from help_calculate import bk
 from total_possibilities import *
+import copy
 
 configurations = {}# a dict with the number of moves as key and a list of interesting configurations that can be reached within the number of moves
 success_instances = [] # a list with all instances that reached the finished state
 
 def movessequence(startpeg, endpeg, disklist, peglist):
     """gibt alle benoetigten Zuege zurueck"""
-    #print("Die Scheiben {} sollen unter Benutzung der Felder {} von {} nach {} bewegt werden".format(disklist,peglist,startpeg,endpeg))
+    print("Die Scheiben {} sollen unter Benutzung der Felder {} von {} nach {} bewegt werden".format(disklist,peglist,startpeg,endpeg))
     #print(disklist)
     #spezialfaelle
     if len(disklist)==1:
@@ -20,7 +22,7 @@ def movessequence(startpeg, endpeg, disklist, peglist):
         #zwischenturmhoehe berechnen
         pegheights = calculatemiddletower(startpeg,endpeg,disklist,peglist)
         pegheight = pegheights[0]
-        print(pegheight)
+        print("use", pegheight)
         #dann die movessequencelist fuer die Zwischentuerme berechnen
         movesequencelist = []
         #bewege einen Zwischenturm nach dem anderen
@@ -29,19 +31,13 @@ def movessequence(startpeg, endpeg, disklist, peglist):
         for peg in peglist:
             height = pegheight[peg]
             if height!=0:
-                #print("aktuell bearbeiteter Zwischenturmpeg:",peg,"in Rekursionstiefe",n_recursion)
-                movingdisks = disklist2[-height:]
-                #print(movingdisks)
+                movingdisks = disklist2[:height]
                 movesequencelist += movessequence(startpeg,peg,movingdisks,peglist2)
                 peglist2.remove(peg)
-                disklist2 = disklist2[:-height]
+                disklist2 = disklist2[height:]
 
+        #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-        #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-        #danach die groesste Scheibe
-        #print("groesste Scheibe:",[disklist[0],startpeg,endpeg])
-        #dann rueckwaerts
         lastmoves = []
         for i in range(1,len(movesequencelist)+1):
             #iterates from len(firstmoves)-1 to 0
@@ -62,17 +58,17 @@ def movessequence(startpeg, endpeg, disklist, peglist):
             newcurrentmove = [currentmove[0],peg1,peg2]
             lastmoves.append(newcurrentmove)
 
-        return movesequencelist[:]+[[disklist[0],startpeg,endpeg]]+lastmoves[:]
+        return movesequencelist[:]+[[disklist[-1],startpeg,endpeg]]+lastmoves[:]
 
 def calculatemiddletower(startpeg,endpeg,disklist,peglist):
     """berechnet die Hoehe der Zwischentuerme und gibt ein dict mit dem Zwischenturm als key und der hoehe als wert aus"""
+    print("calculatemiddletower startpeg =", startpeg, ", endpeg =", endpeg, "\nuse disks", disklist, "\nuse pegs", peglist)
     m = len(peglist); As = len(disklist); mmpegdict = {}
     n = 0
     x = 1
     while As > x:
         n+=1
         x = bk(n+m-2,m-2)
-
     #print(As,n)
     #berechnen der minimalen und maximalen Hoehe eines Zwischenturms
     i = 0
@@ -92,8 +88,7 @@ def calculatemiddletower(startpeg,endpeg,disklist,peglist):
     knowndisks = int(bk(n+m-2,m-2))
     toomuchdisks = knowndisks-As
     pegheightdict = {}
-
-    if True:
+    if False:
         takenallaway = False #true if all unnecessary disks are removed
         #find one variant
         for peg in peglist:
@@ -112,19 +107,32 @@ def calculatemiddletower(startpeg,endpeg,disklist,peglist):
     else:
         notassigned = peglist.copy()
         notassigned.reverse()
-        print(mmpegdict)
+        #print("assignpegheights(", notassigned, pegheightdict, As, mmpegdict, ")")
         pegheights = assignpegheights(notassigned, pegheightdict, As, mmpegdict)
     return pegheights
 
-def assignpegheights(notassigned, pegheightdict, remaining, mmpegdict):
+def assignpegheights(notassigned, pegheightdict, totaldisks, mmpegdict):
     """
     find all pegheightdicts recursively
+
+    notassigned is a list of pegs without assigned height
+    pegheightdict is the dict where the current heights are saved
+    remaining is the number of disks that are not assigned to a peg by now
+    mmpegdict is the dict with the minimum and maximum height that can be assigned to a peg
     """
-    if len(notassigned) == 0:
-        space = "   "*5
+    disknumber = 0
+    for peg in pegheightdict:
+        disknumber += pegheightdict[peg]
+    remaining = totaldisks - disknumber -1
+    #print(remaining, "=", totaldisks, "-", disknumber)
+
+    if len(notassigned) == 0 and remaining == 0:
+        #all disks are assigned to a peg
+        space = "   "*(len(pegheightdict)+1)
         print(space, "done:", pegheightdict)
         return [pegheightdict]
     else:
+        #there is a peg that needs to get a number of disks assigned
         peg = notassigned.pop()
         space = "   "*peg
         minimum = mmpegdict[peg][0]
@@ -138,17 +146,16 @@ def assignpegheights(notassigned, pegheightdict, remaining, mmpegdict):
         pegheights = []
         lower = max(minimum, remaining-maxsum)
         upper = min(maximum, remaining-minsum)
-        print(space, "peg", peg, "remaining", remaining)
-        print(space, "range:", lower, upper)
+        #print(space, "peg", peg, "remaining", remaining, pegheightdict)
+        #print(space, "range:", lower, upper)
         for pegheight in range(lower, upper+1):
-            print(space, peg, " has pegheight", pegheight)
-            remaining -= pegheight
-            pegheightdict[peg] = pegheight
-            a = assignpegheights(notassigned.copy(), pegheightdict, remaining, mmpegdict)
-            for i in a:
-                pegheights.append(i)
+            #print(space, peg, " has pegheight", pegheight, "while remaining is", remaining)
+            if remaining-pegheight >= 0:
+                pegheightdict[peg] = pegheight
+                a = assignpegheights(notassigned.copy(), copy.deepcopy(pegheightdict), totaldisks, mmpegdict)
+                for i in a:
+                    pegheights.append(i)
         return pegheights
-
 
 def movessequence_ui(n,k):
     peglist=[];disklist=[]

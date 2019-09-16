@@ -1,4 +1,5 @@
 from help_calculate import M
+import copy
 
 configurations = {}# a dict with the number of moves as key and a list of interesting configurations that can be reached within the number of moves
 success_instances = [] # a list with all instances that reached the finished state
@@ -55,16 +56,18 @@ class TH():
             string += str(element) + "\n        "
         return string
 
-    def move(movelist):
+    def move(self, movelist):
         """
         pass this function a move in the following format: [disk, startpeg, endpeg]
         """
+
         disk = movelist[0]
         startpeg = movelist[1]
         endpeg = movelist[2]
-        newconfiguration = self.configurationdict.copy()
+        #print("move", disk, "from", startpeg, "to", endpeg)
+        newconfiguration = copy.deepcopy(self.configurationdict)
         newconfiguration[startpeg].remove(disk)
-        newconfiguration[endpeg].append(disk)
+        newconfiguration[endpeg] = [disk]+newconfiguration[endpeg]
         self.history.append(newconfiguration)
         self.configurationdict = newconfiguration
 
