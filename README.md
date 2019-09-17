@@ -8,7 +8,5 @@ The adjustedUpsilon function computes the number of possibilities for solving th
 
 In addition, there is a visualize function that can visualize different types of data and create e.g. Tower of Hanoi pictures or tables with values.
 
-Ideas for things to add:
-Python scripts that create a regular movesequence (also adding variances to those scipts in order to verify adjustedUpsilon)
-Creating a movesequence out of TH.history
-Add ability to plot a movesequence to visualize
+With moves_FS, there is a Python script that creates all possible FS-movessequences
+With createmoves, the history of a TH can be converted into a moveslist.

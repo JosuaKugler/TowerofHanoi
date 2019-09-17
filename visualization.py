@@ -200,6 +200,13 @@ def checkdataformat(description, data):
         print("unknown description, can't check")
     return correct
 
+def showmoveslist(disks, pegs, movelist):
+    ST = TH(disks, pegs)
+    for onemove in movelist:
+        ST.move(onemove)
+    lines = showlist(ST.history)
+    return lines
+
 def visualize(*stuff, **options):
     """
     the visualize function aims to be the general function to visualize everything.
@@ -214,8 +221,12 @@ def visualize(*stuff, **options):
     description='list':
         visualize a list of multiple configurationdict, useful for TH.history
 
+    description='movelist':
+        visualize a list of moves
+        data: [disks, pegs, movelist]
+
     description='configurations':
-        visualize a dict with integers as keys and lists as objects
+        visualize a dict with integers as keys and lists containing configurations as objects
 
     description='movetable':
         table with M(n,k) where data[0] is the maximal 'n' and data[1] is the maximal 'k'
@@ -259,6 +270,8 @@ def visualize(*stuff, **options):
         if checkdataformat(description, data):
             if description == "config":
                 lines = gentikz(data)
+            elif description == "movelist":
+                lines = showmoveslist(data[0], data[1], data[2])
             elif description == "list":
                 lines = showlist(data)
             elif description == "configurations":
