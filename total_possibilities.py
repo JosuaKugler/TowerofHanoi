@@ -79,6 +79,30 @@ class TH():
         self.history.append(newconfiguration)
         self.configurationdict = newconfiguration
 
+def createmoves(THobject):
+    """
+    returns the moves that are performed during THobject.history
+    """
+    moves = []
+    newconfig = THobject.history[0]
+    for config in THobject.history[1:]:
+        oldconfig = copy.deepcopy(newconfig)
+        newconfig = config
+        for peg in newconfig:
+            if newconfig[peg] != oldconfig[peg]:
+                for disk in oldconfig[peg]:
+                    if disk not in newconfig[peg]:
+                        startpeg = peg
+                        crucialdisk = disk
+                        break
+                for disk in newconfig[peg]:
+                    if disk not in oldconfig[peg]:
+                        endpeg = peg
+                        crucialdisk = disk
+                        break
+        moves.append([crucialdisk, startpeg, endpeg])
+    return moves
+
 def process(THobject):
     """
     either save or delete a TH instance

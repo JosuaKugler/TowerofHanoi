@@ -1,4 +1,3 @@
-
 from help_calculate import bk
 from total_possibilities import *
 import copy
@@ -10,8 +9,9 @@ def movessequence(startpeg, endpeg, disklist, peglist):
     """
     returns a list of possible movessequences
     that lead to the solution of the problem within the minimum number of moves
+    sometimes there are still equal movessequences
     """
-    #rint("Die Scheiben {} sollen unter Benutzung der Felder {} von {} nach {} bewegt werden".format(disklist,peglist,startpeg,endpeg))
+    #rint("The disks {} have to be moved from {} to {}, using pegs {}".format(disklist,startpeg,endpeg,peglist))
     #if there is only one disk left, there is only one possible move
     if len(disklist)==1:
         move = [disklist[0],startpeg,endpeg]
@@ -275,7 +275,10 @@ def movessequence_ui(n,k):
     ST = TH(n,k)
     configurations[0] = [ST]
     moves = movessequence(peglist[0],peglist[-1],disklist,peglist)
-    moves = removeequals(n, k, moves)
+    thmoves = removeequals(n, k, moves)
+    moves = []
+    for th in thmoves:
+        moves.append(createmoves(th))
     return moves
 
 def bruteforceadjustedUpsilon(n, k):
