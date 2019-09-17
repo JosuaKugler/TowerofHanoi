@@ -178,7 +178,17 @@ def checkdataformat(description, data):
             for listelement in data:
                 if not checkdataformat('config', listelement):
                     correct = False
-
+    elif description == "movelist":
+        if type(data) != list:
+            correct = False
+        else:
+            for onemove in data:
+                if type(onemove) != list:
+                    correct = False
+                else:
+                    for number in onemove:
+                        if type(number) != int:
+                            correct = False
     elif description == "configurations":
         if type(data) != dict:
             correct = False
@@ -189,7 +199,7 @@ def checkdataformat(description, data):
                 dictelement = data[key]
                 if not checkdataformat('list', dictelement):
                     correct = False
-    elif description == "ptable" or description == "totalptable" or description == "incrementtable" or description == "movetable":
+    elif description == "ptable" or description == "totalptable" or description == "incrementtable" or description == "movetable" or description = "bfptable":
         if type(data) != list:
             correct = False
         elif len(data) != 2:

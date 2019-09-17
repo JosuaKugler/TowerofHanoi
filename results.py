@@ -21,8 +21,4 @@ if __name__ == "__main__":
     disks = int(sys.argv[1])
     pegs = int(sys.argv[2])
     moves = movessequence_ui(disks, pegs)[0]
-    print(moves)
-    ST = TH(disks, pegs)
-    for onemove in moves:
-        ST.move(onemove)
-    newmoves = createmoves(ST)
+    visualize(('movelist', [disks, pegs, moves]))
