@@ -109,9 +109,10 @@ def nktable(nmax, kmax, sort = "value"):
     the entries of the table are specified by the parameter 'sort'
     sort value: the minimum number of moves to solve a configuration with n disks and k pegs
     sort increment: the increment of a configuration with n disks and k pegs
-    sort possibilities/adjustedpossibilities/totalpossibilities:
+    sort possibilities/adjustedpossibilities/bfadjustedpossibilities/totalpossibilities:
     the number of possibilities to get to the finished state of a configuration with n disks and k pegs according to
-    our first (wrong) conjecture with the FS-algorithm/our adjusted conjecture for the FS-algorithm/the bruteforce method
+    our first (wrong) conjecture with the FS-algorithm/our adjusted conjecture for the FS-algorithm/
+    the bruteforce method for the number of possibilities with the FS-algorithm/the bruteforce method
     """
     number_of_columns = nmax
     firstline = r"\begin{tabular}{"
@@ -147,6 +148,8 @@ def nktable(nmax, kmax, sort = "value"):
                 line += "&"+str(totalpossibilities(n,k))
             elif sort == "adjustedpossibilities":
                 line += "&"+str(adjustedUpsilon(n,k))
+            elif sort == "bfadjustedpossibilities":
+                line += "&"+str(bruteforceadjustedUpsilon(n,k))
 
     lines.append(line)
     lines.append(r"\end{tabular}")
@@ -226,6 +229,9 @@ def visualize(*stuff, **options):
     description='ptable':
         table with adjustedpossibilities(n,k) where data[0] is the maximal 'n' and data[1] is the maximal 'k'
 
+    description="bfptable":
+        table with bruteforceadjustedUpsilon(n,k) where data[0] is the maximal 'n' and data[1] is the maximal 'k'
+
     ##############################################################################################
     #keywords:
     separate: pass a latex command as string to this argument. It is called after each (description, data)-tupel.
@@ -265,6 +271,8 @@ def visualize(*stuff, **options):
                 lines = nktable(data[0], data[1], sort = 'totalpossibilities')
             elif description == "ptable":
                 lines = nktable(data[0], data[1], sort = 'adjustedpossibilities')
+            elif description == "bfptable":
+                lines = nktable(data[0], data[1], sort = 'bfadjustedpossibilities')
             else:
                 print("unknown description")
                 lines = []

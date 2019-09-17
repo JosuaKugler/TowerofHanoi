@@ -1,7 +1,4 @@
-# IDEA: write a calculatemiddletower function that returns all possible pegheightdicts.
-#Then use movessequence method on each of them.
-#Somehow use structure from totalpossibilities with TH objects.
-# NOTE: bigger number, bigger disk
+
 from help_calculate import bk
 from total_possibilities import *
 import copy
@@ -10,9 +7,11 @@ configurations = {}# a dict with the number of moves as key and a list of intere
 success_instances = [] # a list with all instances that reached the finished state
 
 def movessequence(startpeg, endpeg, disklist, peglist):
-    """gibt alle benoetigten Zuege zurueck"""
-    print("Die Scheiben {} sollen unter Benutzung der Felder {} von {} nach {} bewegt werden".format(disklist,peglist,startpeg,endpeg))
-    #rint(disklist)
+    """
+    returns a list of possible movessequences
+    that lead to the solution of the problem within the minimum number of moves
+    """
+    #rint("Die Scheiben {} sollen unter Benutzung der Felder {} von {} nach {} bewegt werden".format(disklist,peglist,startpeg,endpeg))
     #if there is only one disk left, there is only one possible move
     if len(disklist)==1:
         move = [disklist[0],startpeg,endpeg]
@@ -24,7 +23,7 @@ def movessequence(startpeg, endpeg, disklist, peglist):
         pegheights = calculatemiddletower(startpeg,endpeg,disklist,peglist)
         resultlist = []
         for pegheight in pegheights:
-            print("use", pegheight)
+            #rint("use", pegheight)
             #compute movesequencelist for building the intermediate towers
             movesequencedict = {}
             peglist2 = peglist.copy()
@@ -85,7 +84,17 @@ def movessequence(startpeg, endpeg, disklist, peglist):
 
 
 def calculatemiddletower(startpeg,endpeg,disklist,peglist):
-    """berechnet die Hoehe der Zwischentuerme und gibt ein dict mit dem Zwischenturm als key und der hoehe als wert aus"""
+    """
+    returns all possible dicts with pegs as keys and the height this peg is supposed to have as item.
+    discussion: what does 'all possible' mean?
+    basically, dicts with the same heights in a different order should lead to the same moves.
+    But, as the movesequence function places the first disks on the first peg it encounters in the dict,
+    the order can indeed matter.
+    Fact: There are equal movesequences if the order is allowed to matter.
+    There are no equal movessequences if pegheightdicts with the same heights
+    in a different order are not allowed to matter.
+    However, there are more different possibilities with the first method if the equal possibilities are removed afterwards.
+    """
     #rint("calculatemiddletower startpeg =", startpeg, ", endpeg =", endpeg, "\nuse disks", disklist, "\nuse pegs", peglist)
     m = len(peglist); As = len(disklist); mmpegdict = {}
     n = 0
@@ -127,13 +136,32 @@ def calculatemiddletower(startpeg,endpeg,disklist,peglist):
             else:
                 pegheightdict[peg] = max_value-toomuchdisks-difference
                 takenallaway = True
-        pegheights = [pegheightdict]
+        differentpegheights = [pegheightdict]
     else:
         notassigned = peglist.copy()
         notassigned.reverse()
         #rint("assignpegheights(", notassigned, pegheightdict, As, mmpegdict, ")")
         pegheights = assignpegheights(notassigned, pegheightdict, As, mmpegdict)
-    return pegheights
+        if False:
+            #two pegheights are different if two pegs are switched.
+            differentpegheights = []
+            differentheights = []
+            for pegheight in pegheights:#pegheight is a dict with pegs and number coding for the heigths
+                new = True
+                thisheight = []
+                for height in pegheight:
+                    thisheight.append(pegheight[height])
+                thisheight.sort()
+                for height in differentheights:
+                    if height == thisheight:
+                        new = False
+                        break
+                if new:
+                    differentpegheights.append(pegheight)
+                    differentheights.append(thisheight)
+        else:
+            differentpegheights = pegheights
+    return differentpegheights
 
 def assignpegheights(notassigned, pegheightdict, totaldisks, mmpegdict):
     """
@@ -153,7 +181,7 @@ def assignpegheights(notassigned, pegheightdict, totaldisks, mmpegdict):
     if len(notassigned) == 0 and remaining == 0:
         #all disks are assigned to a peg
         space = "   "*(len(pegheightdict)+1)
-        print(space, "done:", pegheightdict)
+        #rint(space, "done:", pegheightdict)
         return [pegheightdict]
     else:
         #there is a peg that needs to get a number of disks assigned
@@ -181,6 +209,63 @@ def assignpegheights(notassigned, pegheightdict, totaldisks, mmpegdict):
                     pegheights.append(i)
         return pegheights
 
+def isequal(th1, th2):
+    """
+    returns True if the history of th1 and th2 is equivalent
+    """
+    equal = True
+    for config1, config2 in zip(th1.history, th2.history):
+        if normalize(th1.disks, th1.pegs, config1) != normalize(th2.disks, th2.pegs, config2):
+            equal = False
+    return equal
+
+
+def removeequals(disks, pegs, movepossibilities, show = False):
+    """
+    removes all equal movessequences from movepossibilities
+    and returns a list without the equal movessequences
+    """
+    thlist = []
+    for movelist in movepossibilities:
+        ST = TH(disks, pegs)
+        thlist.append(ST)
+        for move1 in movelist:
+            ST.move(move1)
+    equallists = []
+    for n,th1 in enumerate(thlist):
+        for th2 in thlist[n:]:
+            if th1 != th2:
+                if isequal(th1, th2):
+                    exists = False
+                    for equallist in equallists:
+                        if th1 in equallist:
+                            exists = True
+                            if th2 not in equallist:
+                                equallist.append(th2)
+                        elif th2 in equallist:
+                            exists = True
+                            if th1 not in equallist:
+                                equallist.append(th1)
+                    if not exists:
+                        equallists.append([th1, th2])
+    if show:
+        for equallist in equallists:
+            string = str(equallist[0].id)
+            for th in equallist[1:]:
+                string += "=" + str(th.id)
+            print(string)
+    for th in thlist:
+        unique = True
+        for equallist in equallists:
+            if th in equallist:
+                unique = False
+        if unique:
+            equallists.append([th])
+    newmovepossibilities = []
+    for equallist in equallists:
+        newmovepossibilities.append(equallist[0])
+    return newmovepossibilities
+
 def movessequence_ui(n,k):
     peglist=[];disklist=[]
     for i in range(k):
@@ -190,5 +275,9 @@ def movessequence_ui(n,k):
     ST = TH(n,k)
     configurations[0] = [ST]
     moves = movessequence(peglist[0],peglist[-1],disklist,peglist)
-    #rint(moves, len(moves))
+    moves = removeequals(n, k, moves)
     return moves
+
+def bruteforceadjustedUpsilon(n, k):
+    moves = movessequence_ui(n,k)
+    return len(moves)

@@ -3,6 +3,7 @@ import copy
 
 configurations = {}# a dict with the number of moves as key and a list of interesting configurations that can be reached within the number of moves
 success_instances = [] # a list with all instances that reached the finished state
+idlist = []#a list of all THids
 
 def start_configuration(disks, pegs):
     """
@@ -19,6 +20,7 @@ def start_configuration(disks, pegs):
 class TH():
     """
     a Tower of Hanoi instance with the following properties
+    - self.id: the id of this TH
     - self.disks: the number of disks
     - self.pegs: the number of pegs
     - self.configurationdict: a dict {0:[list with disks on peg 0], 1:[list with disks on peg 1], ...}
@@ -26,13 +28,13 @@ class TH():
     - self.movenumber: the number of moves that is needed to get to this configuration
     - self.normalizedconfiguration: a configuration where the pegs are sorted according to their biggest disk
     and the function move to realize manual moving
-
     """
 
     def __init__(self, disks, pegs, configurationdict = None, history = []):
         """
         initializes a TH
         """
+        self.id = self.__getid__()
         self.disks = disks
         self.pegs = pegs
         if not configurationdict:
@@ -45,16 +47,22 @@ class TH():
         self.normalizedconfiguration = normalize(self.disks, self.pegs, self.configurationdict)
 
     def __repr__(self):
-        string =  "TH"+ str(self.disks) + " "+ str(self.pegs) + " "+ str(self.normalizedconfiguration) + "\n"
+        string =  str(self.id) + "TH"+ str(self.disks) + " "+ str(self.pegs) + " "+ str(self.normalizedconfiguration)
         return string
 
     def __str__(self):
-        string =  """{} disks, {} pegs, configuration: {}
+        string =  """id: {}, {} disks, {} pegs, configuration: {}
         history:
-        """.format(self.disks, self.pegs, self.configurationdict)
+        """.format(self.id, self.disks, self.pegs, self.configurationdict)
         for element in self.history:
             string += str(element) + "\n        "
         return string
+
+    def __getid__(self):
+        global idlist
+        id = len(idlist)
+        idlist.append(id)
+        return id
 
     def move(self, movelist):
         """
