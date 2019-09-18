@@ -82,7 +82,6 @@ def movessequence(startpeg, endpeg, disklist, peglist):
                 resultlist.append(result)
         return resultlist
 
-
 def calculatemiddletower(startpeg,endpeg,disklist,peglist):
     """
     returns all possible dicts with pegs as keys and the height this peg is supposed to have as item.
@@ -218,7 +217,6 @@ def isequal(th1, th2):
         if normalize(th1.disks, th1.pegs, config1) != normalize(th2.disks, th2.pegs, config2):
             equal = False
     return equal
-
 
 def removeequals(disks, pegs, movepossibilities, show = False):
     """

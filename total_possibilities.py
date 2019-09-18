@@ -68,7 +68,6 @@ class TH():
         """
         pass this function a move in the following format: [disk, startpeg, endpeg]
         """
-
         disk = movelist[0]
         startpeg = movelist[1]
         endpeg = movelist[2]
@@ -238,7 +237,6 @@ def save(THobject):
         configurations[THobject.movenumber].append(THobject)
     except:
         configurations[THobject.movenumber] = [THobject]
-    #print(THobject.movenumber, ":", THobject.normalizedconfiguration)
 
 def allpossiblemoves(object):
     """

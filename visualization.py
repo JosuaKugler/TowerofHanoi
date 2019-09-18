@@ -65,7 +65,6 @@ def compile(lines, name):
     os.system("rm {}.log".format(name))
     os.system("rm {}.aux".format(name))
 
-
 def showlist(liste):
     """
     helper function for visualize
@@ -83,11 +82,12 @@ def showconfigurations(configurations):
     """
     lines = []
     for movenumber in configurations:
-        lines.append(str(movenumber))
+        lines.append(str(movenumber) + r"\newline\par\noindent")
         for configuration in configurations[movenumber]:
             tikzcode = gentikz(configuration.copy())
             for line in tikzcode:
                 lines.append(line)
+        lines.append(r"\newpage")
     return lines
 
 def showconfig(config):
@@ -102,6 +102,36 @@ def showconfig(config):
     lines.append(r"\end{document}")
     return lines
 
+def showmoveslist(disks, pegs, movelist):
+    ST = TH(disks, pegs)
+    for onemove in movelist:
+        ST.move(onemove)
+    lines = showlist(ST.history)
+    return lines
+
+def showmoveslists(disks, pegs, moveslists):
+    lines = []
+    for moveslist in moveslists:
+        for line in showmoveslist(disks, pegs, moveslist):
+            lines.append(line)
+        lines.append(r"\newpage")
+    return lines
+
+def compareshowmoveslists(disks, pegs, movelists):
+    """
+    put all configurations after the same number of moves on the same page
+    """
+    movesdict = {}
+    for n in range(len(movelists[0])+1):
+        movesdict[n] = []
+    for moveslist in movelists:
+        ST = TH(disks, pegs)
+        movesdict[0].append(ST.history[0])
+        for n,onemove in enumerate(moveslist):
+            ST.move(onemove)
+            movesdict[n+1].append(ST.history[-1])
+    lines = showconfigurations(movesdict)
+    return lines
 
 def nktable(nmax, kmax, sort = "value"):
     """
@@ -180,17 +210,31 @@ def checkdataformat(description, data):
                     correct = False
     elif description == "movelist":
         if type(data) != list:
+            print("data = {} is type {} but should be type list".format(data, type(data)))
             correct = False
         else:
-            for onemove in data:
-                if type(onemove) != list:
-                    correct = False
-                else:
-                    for number in onemove:
-                        if type(number) != int:
-                            correct = False
+            if type(data[0]) != int:
+                print("data[0] = {} is type {} but should be type int".format(data[0], type(data[0])))
+                correct = False
+            elif type(data[1]) != int:
+                print("data[1] = {} is type {} but should be type int".format(data[1], type(data[1])))
+                correct = False
+            elif type(data[2]) != list:
+                print("data[2] = {} is type {} but should be type list".format(data[2], type(data[2])))
+                correct = False
+            else:
+                for n, onemove in enumerate(data[2]):
+                    if type(onemove) != list:
+                        print("data[2][{}] = {} is type {} but should be list".format(n, onemove, type(onemove)))
+                        correct = False
+                    else:
+                        for k, number in enumerate(onemove):
+                            if type(number) != int:
+                                print("data[2][{}][{}] = {} is type {} but should be int".format(n, k, number, type(number)))
+                                correct = False
     elif description == "configurations":
         if type(data) != dict:
+            print("data = {} is type {} but should be dict".format(data, type(data)))
             correct = False
         else:
             for key in data:
@@ -199,7 +243,7 @@ def checkdataformat(description, data):
                 dictelement = data[key]
                 if not checkdataformat('list', dictelement):
                     correct = False
-    elif description == "ptable" or description == "totalptable" or description == "incrementtable" or description == "movetable" or description = "bfptable":
+    elif description == "ptable" or description == "totalptable" or description == "incrementtable" or description == "movetable" or description == "bfptable":
         if type(data) != list:
             correct = False
         elif len(data) != 2:
@@ -210,20 +254,14 @@ def checkdataformat(description, data):
         print("unknown description, can't check")
     return correct
 
-def showmoveslist(disks, pegs, movelist):
-    ST = TH(disks, pegs)
-    for onemove in movelist:
-        ST.move(onemove)
-    lines = showlist(ST.history)
-    return lines
-
-def visualize(*stuff, **options):
+def visualize(stuff, **options):
     """
     the visualize function aims to be the general function to visualize everything.
-    pass tupels (description, data) to it. All tupels that are mentioned in one function call are put into one pdf.
+    pass a dictionary {description: data, nextdescription: nextdata) to it.
 
     ##################################################################
-    #descriptions for the (description, data) tupel
+    #descriptions for the  'description: data' dictionary entry
+
     description='config':
         visualize a single configurationdict
         configurationdict := {peg1:[disk1, disk2],peg2:[disk3,disk4], ...} where disks and pegs are ints
@@ -234,6 +272,10 @@ def visualize(*stuff, **options):
     description='movelist':
         visualize a list of moves
         data: [disks, pegs, movelist]
+
+    description='movelists':
+    visualize a list of moveslists
+    data: [disks, pegs, movelists]
 
     description='configurations':
         visualize a dict with integers as keys and lists containing configurations as objects
@@ -272,16 +314,17 @@ def visualize(*stuff, **options):
             separate = options[key]
         if key == "name":
             name = options[key]
-
-    totallines = [r"\documentclass{article}", r"\usepackage{xcolor}", r"\usepackage{tikz,pgf}", r"\usepackage[left = 2 cm, top = 2cm]{geometry}", r"\begin{document}"]
-    for ddtupel in stuff:
-        description = ddtupel[0]
-        data = ddtupel[1]
+    works = True
+    totallines = [r"\documentclass{article}", r"\usepackage{xcolor}", r"\usepackage{tikz,pgf}", r"\usepackage[left = 0 cm, top = 0cm, bottom = 0cm, right = 0cm]{geometry}", r"\begin{document}", r"\pagestyle{empty}"]
+    for description in stuff:
+        data = stuff[description]
         if checkdataformat(description, data):
             if description == "config":
                 lines = gentikz(data)
             elif description == "movelist":
                 lines = showmoveslist(data[0], data[1], data[2])
+            elif description == "movelists":
+                lines = compareshowmoveslists(data[0], data[1], data[2])
             elif description == "list":
                 lines = showlist(data)
             elif description == "configurations":
@@ -303,6 +346,8 @@ def visualize(*stuff, **options):
                 totallines.append(line)
             totallines.append(separate)
         else:
-            print("data doesn't match description, please read help(visualization)")
+            print(description, ":", data, "don't match, please read help(visualization)")
+            works = False
     totallines.append(r"\end{document}")
-    compile(totallines, name)
+    if works:
+        compile(totallines, name)

@@ -100,7 +100,8 @@ def upsilon(n,k):
 
 def adjustedUpsilon(n, k):
     """
-    computes the number of possibilities according to the Frame-Stewart algorithm
+    conjecture: computes the number of possibilities according to the Frame-Stewart algorithm
+    conjecture is False, works for some values, and in general as a lower bound.
     """
     if n==0 or k==3 or n<k:
         return 1
