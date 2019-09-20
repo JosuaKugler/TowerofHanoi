@@ -1,5 +1,6 @@
 import os
 from total_possibilities import *
+from moves_FS import *
 from help_calculate import *
 
 def gentikz(configurationdict):
@@ -315,7 +316,7 @@ def visualize(stuff, **options):
         if key == "name":
             name = options[key]
     works = True
-    totallines = [r"\documentclass{article}", r"\usepackage{xcolor}", r"\usepackage{tikz,pgf}", r"\usepackage[left = 0 cm, top = 0cm, bottom = 0cm, right = 0cm]{geometry}", r"\begin{document}", r"\pagestyle{empty}"]
+    totallines = [r"\documentclass{article}", r"\usepackage{xcolor}", r"\usepackage{tikz,pgf}", r"\usepackage[left = 0 cm, top = 0cm, bottom = 0cm, right = 2cm]{geometry}", r"\begin{document}", r"\pagestyle{empty}"]
     for description in stuff:
         data = stuff[description]
         if checkdataformat(description, data):
