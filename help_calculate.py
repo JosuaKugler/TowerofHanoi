@@ -1,4 +1,4 @@
-def faculty(x):
+def factorial(x):
     """
     returns 'x!'
     """
@@ -17,7 +17,7 @@ def bk(n, k):
         return 1
     if k < 0 or k > n:
         return 0
-    value = faculty(n) / (faculty(k) * faculty(n - k))
+    value = factorial(n) / (factorial(k) * factorial(n - k))
     return int(value)
 
 def t_(n, k):
