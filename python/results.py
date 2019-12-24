@@ -47,4 +47,4 @@ if __name__ == "__main__":
 
     ##get a pdf with a table of n and k containing the number of moves, the increment, the number of total possibilities, the number of possibilities with the FS-algorithm according to our adjusted recursive function or the number of possibilities with the FS-algorithm according to our bruteforceadjustedUpsilon function.
     ##Look up the suiting description in the docstring of visualization.visualize
-    #visualize("description":[disks,pegs])
+    visualize({"bfptable":[disks,pegs]})
