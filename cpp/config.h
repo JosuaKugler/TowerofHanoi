@@ -1,13 +1,13 @@
-struct IntListElem
+struct DiskListElem
 {
-    IntListElem* next;
+    DiskListElem* next;
     int value;
 };
 
-struct IntList
+struct DiskList
 {
     int count;
-    IntListElem* first;
+    DiskListElem* first;
 };
 
 struct Move
@@ -20,7 +20,7 @@ struct Move
 struct ConfigElem
 {
     ConfigElem* nextpeg;
-    IntList* disks;
+    DiskList* disks;
 };
 
 class Config
@@ -30,6 +30,8 @@ public:
     Config();
     //initializes a configuration with all disks on the first peg
     Config(int pegnumber, int disknumber);
+    //initializes a configuration with _firstpeg pointing to firstpeg
+    Config(int pegnumber, int disknumber, ConfigElem* firstpeg);
     //Destructor
     ~Config();
     //returns the number of pegs
@@ -39,7 +41,7 @@ public:
     //returns the peg a disk is positioned on
     int diskposition(int disk);
     //returns an Intlist* with the disks on peg
-    IntList* get_disks(int peg);
+    DiskList* get_disks(int peg);
     //inserts the disk in the list of peg
     void insert_disk(int disk, int peg);
     //remove the disk from the list of the peg
@@ -48,6 +50,16 @@ public:
     void move_config(Move move);
     //print the configuration
     void print();
+    //return a vector containing all possible moves of this disk
+    std::vector<Move> possiblemoves(int disk);
+    //return a vector containing all possible moves of all disks
+    std::vector<Move> allpossiblemoves();
+    //return the normalized configuration as a new Config
+    Config normalize();
+    //test whether two configurations are exactly equal
+    bool isequal(Config* compareconfig);
+    //test whether two configurations are equal according to our normalization
+    bool normequal(Config* compareconfig);
 private:
     int _pegs;
     int _disks;
