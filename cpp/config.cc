@@ -1,10 +1,7 @@
 #include <iostream>
 #include <vector>
-#include "help_calculate.h"
-
 #include "config.h"
 
-typedef std::vector<Move> Movevec;
 
 //some DiskList stuff that might be useful
 DiskListElem* find_disk(DiskList l, int disk)
@@ -129,10 +126,12 @@ void pushdisk(DiskList* enddisks, int disknumber, int position)
         {
             disk = disk->next;
         }
+        ins->next = disk->next;
         disk->next = ins;
     }
     else
     {
+        ins->next = enddisks->first;
         enddisks->first = ins;
     }
     ++enddisks->count;
@@ -223,9 +222,9 @@ Move newmove(int disk, int startpeg, int destinationpeg)
     return move;
 }
 
-void printmoves(Movevec moves)
+void printmoves(std::vector<Move> moves)
 {
-    Movevec::const_iterator i;
+    std::vector<Move>::const_iterator i;
     for (i = moves.begin(); i != moves.end(); i++)
     {
         std::cout << i->disk << ": " << i->startpeg << "->" << i->destinationpeg << ", ";
@@ -362,11 +361,11 @@ void Config::print()
     std::cout << std::endl;
 }
 
-Movevec Config::possiblemoves(int disk)
+std::vector<Move> Config::possiblemoves(int disk)
 {
     int pegnumber = diskposition(disk);
     DiskList* disks = get_disks(pegnumber);
-    Movevec moves;
+    std::vector<Move> moves;
     for (int peg = 0; peg < _pegs; peg++)
     {
         int currentmindisk = mindisk(get_disks(peg));
@@ -378,7 +377,7 @@ Movevec Config::possiblemoves(int disk)
     return moves;
 }
 
-Movevec Config::allpossiblemoves()
+std::vector<Move> Config::allpossiblemoves()
 {
     DiskList* mindisks = new DiskList;
     for (int peg = 0; peg < _pegs; peg++)
@@ -387,7 +386,7 @@ Movevec Config::allpossiblemoves()
         pushdisk(mindisks, currentmindisk, peg);
     }
 
-    Movevec moves;
+    std::vector<Move> moves;
     for (int startpeg = 0; startpeg < _pegs; startpeg++)
     {
         int currentdisk = getdisk(mindisks, startpeg);
@@ -490,16 +489,4 @@ bool Config::normequal(Config* compareconfig)
         bool ret = firstconfig.isequal(&secondconfig);
         return ret;
     }
-}
-
-int main()
-{
-    Config testconfig = Config(3,5);
-    testconfig.print();
-    testconfig.move_config(newmove(0,0,2));
-    testconfig.print();
-    Config newconfig = testconfig.normalize();
-    newconfig.print();
-    std::cout << newconfig.normequal(&testconfig);
-    return 0;
 }
