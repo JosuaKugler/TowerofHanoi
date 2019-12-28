@@ -1,14 +1,4 @@
-struct DiskListElem
-{
-    DiskListElem* next;
-    int value;
-};
-
-struct DiskList
-{
-    int count;
-    DiskListElem* first;
-};
+#include "mylist.cc"
 
 struct Move
 {
@@ -20,7 +10,7 @@ struct Move
 struct ConfigElem
 {
     ConfigElem* nextpeg;
-    DiskList* disks;
+    MyList* disks;
 };
 
 class Config
@@ -41,7 +31,7 @@ public:
     //returns the peg a disk is positioned on
     int diskposition(int disk);
     //returns an Intlist* with the disks on peg
-    DiskList* get_disks(int peg);
+    MyList* get_disks(int peg);
     //inserts the disk in the list of peg
     void insert_disk(int disk, int peg);
     //remove the disk from the list of the peg

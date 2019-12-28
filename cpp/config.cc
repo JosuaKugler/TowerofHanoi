@@ -2,217 +2,6 @@
 #include <vector>
 #include "config.h"
 
-
-//some DiskList stuff that might be useful
-DiskListElem* find_disk(DiskList l, int disk)
-{
-    for (DiskListElem* p = l.first; p != 0; p = p->next)
-    {
-        if (p->value == disk)
-        {
-            return p;
-        }
-    }
-    return 0;
-}
-
-int get_index(DiskList* l, int disk)
-{
-    int count = 0;
-    for (DiskListElem* p = l->first; p != 0; p = p->next)
-    {
-        if (p->value == disk)
-        {
-            return count;
-        }
-        ++count;
-    }
-    return -1;
-}
-
-int mindisk(DiskList* disks)
-{
-    //list is not empty
-    if (disks->first != 0)
-    {
-        int min = disks->first->value;
-        for (DiskListElem* disk = disks->first->next; disk != 0; disk = disk->next)
-        {
-            if (disk->value < min)
-            {
-                min = disk->value;
-            }            
-        }
-        return min;
-    }
-    else
-    {
-        return -1;
-    }
-}
-
-int maxdisk(DiskList* disks)
-{
-    //list is not empty
-    if (disks->first != 0)
-    {
-        int max = disks->first->value;
-        for (DiskListElem* disk = disks->first->next; disk != 0; disk = disk->next)
-        {
-            if (disk->value > max)
-            {
-                max = disk->value;
-            }            
-        }
-        return max;
-    }
-    else
-    {
-        return -1;
-    }
-}
-
-void add_disk_ordered(DiskList* enddisks, int disknumber)
-{
-    //DiskListElem we want to insert
-    DiskListElem* ins = new DiskListElem;
-    ins->value = disknumber;
-    //enddisks is not empty
-    if (enddisks->first != 0)
-    {
-        for (DiskListElem* disk = enddisks->first; disk != 0; disk = disk->next)
-        {
-            //the appended disk doesn't have the biggest number
-            if (disk->next != 0)
-            {
-                //disknumber is bigger than the current disk, but smaller than the next disk
-                if (disk->value < disknumber and disk->next->value > disknumber)
-                {
-                    ins->next = disk->next;
-                    disk->next = ins;
-                    break;
-                }
-                //disknumber is smaller than all the other disks in this list
-                else if (disk->value > disknumber)
-                {
-                    ins->next = enddisks->first;
-                    enddisks->first = ins;
-                    break;
-                }
-            }
-            else
-            {
-                disk->next = ins;
-                ins->next = 0;
-            }
-        }
-    }
-    else
-    {
-        enddisks->first = ins;
-    }
-    ++enddisks->count;
-}
-
-void pushdisk(DiskList* enddisks, int disknumber, int position)
-{
-    //DiskListElem we want to insert
-    DiskListElem* ins = new DiskListElem;
-    ins->value = disknumber;
-    if (position != 0)
-    {
-        DiskListElem* disk = enddisks->first;
-        for (size_t i = 1; i < position; ++i)
-        {
-            disk = disk->next;
-        }
-        ins->next = disk->next;
-        disk->next = ins;
-    }
-    else
-    {
-        ins->next = enddisks->first;
-        enddisks->first = ins;
-    }
-    ++enddisks->count;
-}
-
-int getdisk(DiskList* disks, int position)
-{
-    DiskListElem* disk = disks->first;
-    for (size_t i = 0; i < position; ++i)
-    {
-        disk = disk->next;
-    }
-    return disk->value;
-}
-
-void removedisk(DiskList* startdisks, int disknumber)
-{
-    DiskListElem* previousdisk = 0;
-    for (DiskListElem* disk = startdisks->first; disk != 0; disk = disk->next)
-    {
-        if (disk->value == disknumber)
-        {
-            if (previousdisk == 0)
-            {
-                startdisks->first = disk->next;
-            }
-            else
-            {
-                previousdisk->next = disk->next;
-            }
-            break;
-        }
-        previousdisk = disk;
-    }
-    --startdisks->count;
-}
-
-DiskList deepcopy(DiskList* disks)
-{
-    DiskList retlist;
-    retlist.count = 0;
-    for (int i = 0; i < disks->count; i++)
-    {
-        pushdisk(&retlist, getdisk(disks, i), i);
-    }
-    return retlist;
-}
-
-void printlist(DiskList* list)
-{
-    std::cout << "[ ";
-    for (DiskListElem* i = list->first; i!=0; i = i->next)
-    {
-        std::cout << i->value << " ";
-    }
-    std::cout << "]" << std::endl;
-}
-
-bool is_equal_list(DiskList* firstlist, DiskList* secondlist)
-{
-    if (firstlist->count != secondlist->count)
-    {
-        return false;
-    }
-    else
-    {
-        DiskListElem* firstp = firstlist->first;
-        DiskListElem* secondp = secondlist->first;
-        for (size_t i = 0; i < firstlist->count; i++)
-        {
-            if (firstp->value != secondp->value)
-            {
-                return false;
-            }
-            firstp = firstp->next;
-            secondp = secondp->next;
-        }
-    }
-    return true;
-}
-
 Move newmove(int disk, int startpeg, int destinationpeg)
 {
     Move move;
@@ -244,26 +33,13 @@ Config::Config(int pegnumber, int disknumber)
     _pegs = pegnumber;
     _disks = disknumber;
     _firstpeg = new ConfigElem;
-    _firstpeg->disks = new DiskList;
-    _firstpeg->disks->count = _disks;
-    _firstpeg->disks->first = new DiskListElem;
-    DiskListElem* lastdisk = _firstpeg->disks->first;
-    for (size_t i = 0; i < _disks-1; i++)
-    {
-        lastdisk->value = i;
-        lastdisk->next = new DiskListElem;
-        lastdisk = lastdisk->next;
-    }
-    lastdisk->value = _disks-1;
-    
+    _firstpeg->disks = new MyList(disknumber);
     ConfigElem* lastpeg = _firstpeg;
     for (size_t i = 1; i < _pegs; i++)
     {
         lastpeg->nextpeg = new ConfigElem;
         lastpeg = lastpeg->nextpeg;
-        lastpeg->disks = new DiskList;
-        lastpeg->disks->count = 0;
-        lastpeg->disks->first = 0;
+        lastpeg->disks = new MyList;
     }
 }
 
@@ -304,20 +80,16 @@ int Config::diskposition(int diskvalue)
         //iterate over all pegs
         for (size_t i = 0; i < _pegs; ++i)
         {
-            //iterate over all disks on the current peg
-            for (DiskListElem* disk = peg->disks->first; disk != 0; disk = disk->next)
+            if (peg->disks->get_index(diskvalue) != -1)
             {
-                if (disk->value == diskvalue)
-                {
-                    return i;
-                };
+                return i;
             }
             peg = peg->nextpeg;
         }
     }
 }
 
-DiskList* Config::get_disks(int pegnumber)
+MyList* Config::get_disks(int pegnumber)
 {
     ConfigElem* peg = _firstpeg;
     //iterate until we get to pegnumber
@@ -330,14 +102,14 @@ DiskList* Config::get_disks(int pegnumber)
 
 void Config::remove_disk(int disknumber, int pegnumber)
 {
-    DiskList* startdisks = get_disks(pegnumber);
-    removedisk(startdisks, disknumber);
+    MyList* startdisks = get_disks(pegnumber);
+    startdisks->remove_val(disknumber);
 }
 
 void Config::insert_disk(int disknumber, int pegnumber)
 {
-    DiskList* enddisks = get_disks(pegnumber);
-    add_disk_ordered(enddisks, disknumber);
+    MyList* enddisks = get_disks(pegnumber);
+    enddisks->append_ordered(disknumber);
 }
 
 void Config::move_config(Move move)
@@ -350,11 +122,11 @@ void Config::print()
 {
     for (size_t i = 0; i < _pegs; i++)
     {
-        DiskList* disklist = get_disks(i);
+        MyList* disklist = get_disks(i);
         std::cout << "peg " << i << ": [";
-        for (DiskListElem* disk = disklist->first; disk != 0; disk = disk->next)
+        for (int i = 0; i < disklist->len(); ++i)
         {
-            std::cout << " " << disk->value;
+            std::cout << " " <<disklist->get_val(i);
         }
         std::cout << " ], ";
     }
@@ -364,11 +136,11 @@ void Config::print()
 std::vector<Move> Config::possiblemoves(int disk)
 {
     int pegnumber = diskposition(disk);
-    DiskList* disks = get_disks(pegnumber);
+    MyList* disks = get_disks(pegnumber);
     std::vector<Move> moves;
     for (int peg = 0; peg < _pegs; peg++)
     {
-        int currentmindisk = mindisk(get_disks(peg));
+        int currentmindisk = get_disks(peg)->min_val();
         if (disk < currentmindisk or currentmindisk == -1)
         {
             moves.push_back(newmove(disk, pegnumber, peg));
@@ -379,22 +151,23 @@ std::vector<Move> Config::possiblemoves(int disk)
 
 std::vector<Move> Config::allpossiblemoves()
 {
-    DiskList* mindisks = new DiskList;
+    MyList* mindisks = new MyList;
     for (int peg = 0; peg < _pegs; peg++)
     {
-        int currentmindisk = mindisk(get_disks(peg));
-        pushdisk(mindisks, currentmindisk, peg);
+        int currentmindisk = get_disks(peg)->min_val();
+        //pushdisk(mindisks, currentmindisk, peg);
+        mindisks->append(currentmindisk);
     }
 
     std::vector<Move> moves;
     for (int startpeg = 0; startpeg < _pegs; startpeg++)
     {
-        int currentdisk = getdisk(mindisks, startpeg);
+        int currentdisk = mindisks->get_val(startpeg);
         if (currentdisk != -1)
         {
             for (int destinationpeg = 0; destinationpeg < _pegs; destinationpeg++)
             {
-                int destinationpegsize = getdisk(mindisks, destinationpeg);
+                int destinationpegsize = mindisks->get_val(destinationpeg); //getdisk(mindisks, destinationpeg);
                 if (currentdisk < destinationpegsize or destinationpegsize == -1)
                 {
                     moves.push_back(newmove(currentdisk, startpeg, destinationpeg));
@@ -408,25 +181,29 @@ std::vector<Move> Config::allpossiblemoves()
 Config Config::normalize()
 {
     //get the maximum disk of each peg
-    DiskList* maxdisks = new DiskList;
+    MyList* maxdisks = new MyList;
     for (int peg = 0; peg < _pegs; peg++)
     {
-        int currentmaxdisk = maxdisk(get_disks(peg));
-        pushdisk(maxdisks, currentmaxdisk, peg);
+        int currentmaxdisk = get_disks(peg)->max_val();
+        //pushdisk(maxdisks, currentmaxdisk, peg);
+        maxdisks->insert_at_index(currentmaxdisk, peg);
     }
     //get indices in order of ascending size
-    //abuse of Disklist xD
-    DiskList copymaxdisks = deepcopy(maxdisks);
-    DiskList* basedisks = &copymaxdisks;
-    DiskList* indices = new DiskList;
+    //DiskList copymaxdisks = deepcopy(maxdisks);
+    //DiskList* basedisks = &copymaxdisks;
+
+    MyList* basedisks = new MyList(*maxdisks);
+    MyList* indices = new MyList;
     for (int i = 0; i < _pegs; i++)
     {
         //get the biggest disk
-        int currentmaxdisk = maxdisk(maxdisks);
+        int currentmaxdisk = maxdisks->max_val();
         //problem: index in maxdisks shifts as we remove entrys
-        int currentmaxindex = get_index(basedisks, currentmaxdisk);
-        pushdisk(indices, currentmaxindex, i);
-        removedisk(maxdisks, currentmaxdisk);
+        int currentmaxindex = basedisks->get_index(currentmaxdisk);//get_index(basedisks, currentmaxdisk);
+        //pushdisk(indices, currentmaxindex, i);
+        indices->insert_at_index(currentmaxindex, i);
+        //removedisk(maxdisks, currentmaxdisk);
+        maxdisks->remove_val(currentmaxdisk);
     }
     //create new Config with sorted pegs
     ConfigElem* firstpeg = new ConfigElem;
@@ -435,7 +212,7 @@ Config Config::normalize()
     {
         //set p to the peg that is added next
         ConfigElem* p = _firstpeg;
-        for (int j = 0; j < getdisk(indices, i); j++)
+        for (int j = 0; j < indices->get_val(i); j++)
         {
             p = p->nextpeg;
         }
@@ -444,7 +221,7 @@ Config Config::normalize()
         last = last->nextpeg;
     }
     ConfigElem* p = _firstpeg;
-    for (int j = 0; j < getdisk(indices, _pegs-1); j++)
+    for (int j = 0; j < indices->get_val(_pegs-1); j++)
     {
         p = p->nextpeg;
     }
@@ -467,7 +244,7 @@ bool Config::isequal(Config* compareconfig)
     {
         for (int pegnumber = 0; pegnumber < _pegs; pegnumber++)
         {
-            if (not is_equal_list(get_disks(pegnumber), compareconfig->get_disks(pegnumber)))
+            if (not get_disks(pegnumber)->is_equal(*(compareconfig->get_disks(pegnumber))))
             {
                 return false;
             }
