@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <string>
 #include "config.h"
 
 Move newmove(int disk, int startpeg, int destinationpeg)
@@ -48,6 +49,21 @@ Config::Config(int pegnumber, int disknumber, ConfigElem* firstpeg)
     _pegs = pegnumber;
     _disks = disknumber;
     _firstpeg = firstpeg;
+}
+
+Config::Config(Config* config)
+{
+    _disks = config->_disks;
+    _pegs = config->_pegs;
+    _firstpeg = new ConfigElem;
+    _firstpeg->disks = new MyList(*(config->get_disks(0)));
+    ConfigElem* peg = _firstpeg;
+    for (int i = 1; i < _pegs; i++)
+    {
+        peg->nextpeg = new ConfigElem;
+        peg = peg->nextpeg;
+        peg->disks = new MyList(*(config->get_disks(i)));
+    }
 }
 
 Config::~Config()
@@ -118,19 +134,20 @@ void Config::move_config(Move move)
     insert_disk(move.disk, move.destinationpeg);
 }
 
-void Config::print()
+std::string Config::to_string()
 {
-    for (size_t i = 0; i < _pegs; i++)
+    std::string retstring = "";
+    for (int i = 0; i < _pegs; i++)
     {
         MyList* disklist = get_disks(i);
-        std::cout << "peg " << i << ": [";
+        retstring += "peg " + std::to_string(i) + ": [";
         for (int i = 0; i < disklist->len(); ++i)
         {
-            std::cout << " " <<disklist->get_val(i);
+            retstring += " "  + std::to_string(disklist->get_val(i));
         }
-        std::cout << " ], ";
+        retstring += " ], ";
     }
-    std::cout << std::endl;
+    return retstring;
 }
 
 std::vector<Move> Config::possiblemoves(int disk)

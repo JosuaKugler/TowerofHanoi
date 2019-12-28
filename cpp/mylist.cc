@@ -1,5 +1,4 @@
 #include "mylist.h"
-//#include<iostream>
 
 MyList::MyList()
 {
@@ -20,16 +19,23 @@ MyList::MyList(int count)
 MyList::MyList(MyList& list)
 {
     _count = list.len();
-    _firstElem = new MyListElem;
-    _firstElem->value = list.get_val(0);
-    MyListElem* p = _firstElem;
-    for (int i = 1; i < list.len(); i++)
+    if (_count != 0)
     {
-        p->next = new MyListElem;
-        p = p->next;
-        p->value = list.get_val(i);
+        _firstElem = new MyListElem;
+        _firstElem->value = list.get_val(0);
+        MyListElem* p = _firstElem;
+        for (int i = 1; i < list.len(); i++)
+        {
+            p->next = new MyListElem;
+            p = p->next;
+            p->value = list.get_val(i);
+        }
+        p = 0;
     }
-    p = 0;
+    else
+    {
+        _firstElem = 0;
+    }
 }
 
 MyList::~MyList()
@@ -251,10 +257,3 @@ bool MyList::is_equal(MyList& list)
     }
     return true;
 }
-/* 
-int main()
-{
-    MyList* hi = new MyList(5);
-    hi->print();
-    return 0;
-} */

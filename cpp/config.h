@@ -22,6 +22,8 @@ public:
     Config(int pegnumber, int disknumber);
     //initializes a configuration with _firstpeg pointing to firstpeg
     Config(int pegnumber, int disknumber, ConfigElem* firstpeg);
+    //copy constructor
+    Config(Config* config);
     //Destructor
     ~Config();
     //returns the number of pegs
@@ -39,7 +41,7 @@ public:
     //changes the configuration by performing Move
     void move_config(Move move);
     //print the configuration
-    void print();
+    std::string to_string();
     //return a vector containing all possible moves of this disk
     std::vector<Move> possiblemoves(int disk);
     //return a vector containing all possible moves of all disks
