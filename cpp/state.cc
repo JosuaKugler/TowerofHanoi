@@ -3,6 +3,11 @@
 #include "help_calculate.h"
 #include<iostream>
 
+
+//important:
+// add_child as function in order to add children from outside
+// set_parent also as outside function? no, just add prevstate in constructor
+
 State::State()
 {
     movenumber = 0;
@@ -10,7 +15,7 @@ State::State()
     prevstate = 0;
     prevmove = 0;
     nextstate = 0;
-    optimal = true;
+    index_in_master = -1;
 }
 
 State::State(int pegnumber, int disknumber)
@@ -20,7 +25,7 @@ State::State(int pegnumber, int disknumber)
     prevstate = 0;
     prevmove = 0;
     nextstate = 0;
-    optimal = true;
+    index_in_master = -1;
 }
 
 State::State(State* oldstate, Move* newmove)
@@ -31,10 +36,10 @@ State::State(State* oldstate, Move* newmove)
     prevstate = oldstate;
     prevmove = newmove;
     nextstate = 0;
-    optimal = true;
+    index_in_master = -1;
 }
 
-/* State::~State()
+State::~State()
 {
     config = 0;
     prevmove = 0;
@@ -58,8 +63,16 @@ State::State(State* oldstate, Move* newmove)
         }
         previous = p;
     }
-    prevstate = 0;
-} */
+    //if there are no children left for prevstate delete it
+    if (list == 0)
+    {
+        delete prevstate;
+    }
+    else
+    {
+        prevstate = 0;
+    }
+}
 
 Config* State::get_config()
 {
@@ -69,11 +82,6 @@ Config* State::get_config()
 int State::get_movenumber()
 {
     return movenumber;
-}
-
-bool State::is_optimal()
-{
-    return optimal;
 }
 
 State* State::get_prevstate()
@@ -117,14 +125,25 @@ bool State::check(std::vector<std::vector<State*>>* master)
         for (size_t j = 0; j < i_reach_states.size(); j++)
         {
             State* i_j_state = i_reach_states.at(j);
-            if (config->normequal(i_j_state->get_config()))
+            if (i_j_state != 0)
             {
-                optimal = false;
-                return false;
+                Config* comparison = i_j_state->get_config();
+                std::cout << comparison->to_string();
+                if (config->normequal(comparison))
+                {
+                    std::cout << comparison->to_string();
+                    return false;
+                }
+                else
+                {
+                    std::cout << "they're not equal!";
+                }
+                
             }
         }
     }
 
+    //it isn't finished but took maxmoves
     int maxmoves = (M(config->disknumber(), config->pegnumber())-1)/2;
     //only biggest disk is left on peg 0
     bool bigalone = false;
@@ -134,7 +153,6 @@ bool State::check(std::vector<std::vector<State*>>* master)
     }
     else if (movenumber == maxmoves) // if it took maxmoves but isn't finished, it's not optimal
     {
-        optimal = false;
         return false;
     }
 
@@ -154,40 +172,32 @@ bool State::check(std::vector<std::vector<State*>>* master)
     return true;
 }
 
-void State::newlayer(std::vector<std::vector<State*>>* master)
+//try if implementation works, otherwise change laststate->next stuff
+void State::add_child(State* child)
 {
-    std::vector<Move> allmoves = config->allpossiblemoves();
-    //debug
-    printmoves(allmoves);
-    nextstate = new StateListElem;
-    StateListElem* p = nextstate;
-    for (size_t i = 0; i < allmoves.size(); i++)
-    {
-        Move currentmove = allmoves.at(i);
-        p->state = new State(this, &currentmove);
-        if (p->state->check(master))
-        {
-            p->next = new StateListElem;
-            p = p->next;   
-        }
-        else
-        {
-            p->state = 0;
-        }
-    }
-    //p points to a new StateListElem, but we want it to be 0
-    p = 0;
-    //check if there are children at all
     if (nextstate == 0)
     {
-        optimal = false;
+        nextstate = new StateListElem;
+        nextstate->state = child;
+        nextstate->next = 0;
     }
     else
     {
-        //store elements of nextstate list in master[movenumber + 1]
+        StateListElem* laststate;
         for (StateListElem* p = nextstate; p != 0; p = p->next)
-        {
-            master->at(movenumber + 1).push_back(p->state);
-        }
+        {laststate = p;}
+        laststate->next = new StateListElem;
+        laststate->next->state = child;
+        laststate->next->next = 0;
     }
+}
+
+int State::get_index()
+{
+    return index_in_master;
+}
+
+void State::set_index(int index)
+{
+    index_in_master = index;
 }

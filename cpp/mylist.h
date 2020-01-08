@@ -1,7 +1,7 @@
 struct MyListElem
 {
-    MyListElem* next;
     int value;
+    MyListElem* next;
 };
 
 class MyList

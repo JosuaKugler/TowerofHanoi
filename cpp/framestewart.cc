@@ -13,9 +13,9 @@ int main()
 {
     Config testconfig = Config(3,5);
     testconfig.move_config(newmove(0,0,2));
-    testconfig.print();
+    std::cout << testconfig.to_string();
     Config newconfig = testconfig.normalize();
-    newconfig.print();
+    std::cout << newconfig.to_string();
     Config* testconfigpointer = &testconfig;
     std::cout << newconfig.normequal(testconfigpointer);
     return 0;
