@@ -237,8 +237,8 @@ Config Config::normalize()
         maxdisks->remove_val(currentmaxdisk);
     }
     //create new Config with sorted pegs
-    ConfigElem* firstpeg = new ConfigElem;
-    ConfigElem* last = firstpeg;
+    ConfigElem* newfirstpeg = new ConfigElem;
+    ConfigElem* last = newfirstpeg;
     for (int i = 0; i < _pegs-1; i++)
     {
         //set p to the peg that is added next
@@ -247,7 +247,9 @@ Config Config::normalize()
         {
             p = p->nextpeg;
         }
-        last->disks = p->disks;
+        //problem: copied pointer to list, not list!
+        //last->disks = p->disks;
+        last->disks = new MyList(*(p->disks));
         last->nextpeg = new ConfigElem;
         last = last->nextpeg;
     }
@@ -256,9 +258,11 @@ Config Config::normalize()
     {
         p = p->nextpeg;
     }
-    last->disks = p->disks;
+    //problem: copied pointer to list, not list!
+    //last->disks = p->disks;
+    last->disks = new MyList(*(p->disks));
     last->nextpeg = 0;
-    return Config(_pegs, _disks, firstpeg);
+    return Config(_pegs, _disks, newfirstpeg);
 }
 
 bool Config::isequal(Config* compareconfig)

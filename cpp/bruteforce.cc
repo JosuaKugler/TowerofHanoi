@@ -78,14 +78,7 @@ void run()
     State* first = new State(3,5);
     first->set_index(0);
     master->at(0).push_back(first);
-    State* parent = master->at(0).at(0);
-    //std::cout << parent->get_config()->isequal(first->get_config());
-    //create all children of parent and add them to the next layer of master
-    std::vector<Move> allmoves = parent->get_config()->allpossiblemoves();
-    Move currentmove = allmoves.at(0);
-    State* child = new State(first, &currentmove);
-    bool optimal = child->check(master);
-    //make_children_else_destroy_parents_recursively(master, 0, 0);
+    make_children_else_destroy_parents_recursively(master, 0, 0);
     print(master);
 }
 
