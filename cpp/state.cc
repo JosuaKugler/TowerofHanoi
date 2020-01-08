@@ -64,14 +64,11 @@ State::~State()
         previous = p;
     }
     //if there are no children left for prevstate delete it
-    if (list == 0)
+    /* if (list == 0)
     {
         delete prevstate;
-    }
-    else
-    {
-        prevstate = 0;
-    }
+    } */
+    prevstate = 0;
 }
 
 Config* State::get_config()
@@ -128,17 +125,12 @@ bool State::check(std::vector<std::vector<State*>>* master)
             if (i_j_state != 0)
             {
                 Config* comparison = i_j_state->get_config();
-                std::cout << comparison->to_string();
+                //std::cout << comparison->to_string();
                 if (config->normequal(comparison))
                 {
-                    std::cout << comparison->to_string();
+                    //std::cout << comparison->to_string();
                     return false;
                 }
-                else
-                {
-                    std::cout << "they're not equal!";
-                }
-                
             }
         }
     }
