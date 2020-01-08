@@ -1,7 +1,6 @@
 #include <cmath>
-typedef unsigned long long my_int;
 
-my_int faculty(my_int n)
+int faculty(int n)
 {
     if (n == 0)
     {
@@ -13,7 +12,7 @@ my_int faculty(my_int n)
     }   
 }
 
-my_int bk(my_int n, my_int k)
+int bk(int n, int k)
 {
     if (n == k)
     {
@@ -26,10 +25,10 @@ my_int bk(my_int n, my_int k)
     return faculty(n)/(faculty(n-k) * faculty(k));
 }
 
-my_int t_(my_int n, my_int k)
+int t_(int n, int k)
 {
-    my_int t = -1;
-    my_int x = 0;
+    int t = -1;
+    int x = 0;
     while ( n > x )
     {
         ++t;
@@ -38,25 +37,25 @@ my_int t_(my_int n, my_int k)
     return t;
 }
 
-my_int formula(my_int n, my_int k, my_int t)
+int formula(int n, int k, int t)
 {
     if (k == 3)
     {
         //types?
         return pow(2, n) - 1;
     }
-    my_int x = 0;
-    for (my_int i = 0; i <= t+1; ++i)
+    int x = 0;
+    for (int i = 0; i <= t+1; ++i)
     {
         x = x + pow(2, i*bk(i+k-3, k-3));
     }
-    my_int correction = pow(2, t*(n-bk(t+k-2, k-2)));
+    int correction = pow(2, t*(n-bk(t+k-2, k-2)));
     return x - correction;
 }
 
-my_int M(my_int n, my_int k)
+int M(int n, int k)
 {
-    my_int t = t_(n,k);
-    my_int x = formula(n , k , t);
+    int t = t_(n,k);
+    int x = formula(n , k , t);
     return x;
 }

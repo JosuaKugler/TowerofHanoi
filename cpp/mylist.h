@@ -37,7 +37,7 @@ public:
     //remove the first occurence of val
     void remove_val (int val);
     //print list
-    void print();
+    std::string to_string();
     //equality
     bool is_equal(MyList& list);
     private:

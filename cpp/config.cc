@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <string>
 #include "config.h"
 
 Move newmove(int disk, int startpeg, int destinationpeg)
@@ -10,6 +9,20 @@ Move newmove(int disk, int startpeg, int destinationpeg)
     move.startpeg = startpeg;
     move.destinationpeg = destinationpeg;
     return move;
+}
+
+std::string move_to_string(Move* move)
+{
+    std::string retstring;
+    if (move == 0)
+    {
+        retstring =  "";
+    }
+    else
+    {
+        retstring = std::to_string(move->disk) + ": " + std::to_string(move->startpeg) + "->" + std::to_string(move->destinationpeg);
+    }
+    return retstring;
 }
 
 void printmoves(std::vector<Move> moves)
@@ -140,12 +153,13 @@ std::string Config::to_string()
     for (int i = 0; i < _pegs; i++)
     {
         MyList* disklist = get_disks(i);
-        retstring += "peg " + std::to_string(i) + ": [";
+        retstring += "peg " + std::to_string(i) + " " + disklist->to_string() + " ";
+        /* retstring += "peg " + std::to_string(i) + ": [";
         for (int i = 0; i < disklist->len(); ++i)
         {
             retstring += " "  + std::to_string(disklist->get_val(i));
         }
-        retstring += " ], ";
+        retstring += " ]"; */
     }
     return retstring;
 }
