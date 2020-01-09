@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-#include "help_calculate.h"
-//#include "state.cc"
-=======
 #include "state.cc"
 
 //idea: operate in master, create new objects from master and collect the pointers inside master.
@@ -89,7 +85,6 @@ void run()
     }
     print(master);
 }
->>>>>>> secondbfattempt
 
 int main()
 {
