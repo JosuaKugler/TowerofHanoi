@@ -34,7 +34,7 @@ State::State(State* oldstate, Move* newmove)
     config = new Config(oldstate->get_config());
     config->move_config(*newmove);
     prevstate = oldstate;
-    prevmove = newmove;
+    prevmove = new Move(*newmove);
     nextstate = 0;
     index_in_master = -1;
 }
@@ -98,8 +98,8 @@ StateListElem* State::get_nextstate()
 
 std::string State::to_string(bool all)
 {
-    std::string retstring = "State " + std::to_string(movenumber) + ": " + config->to_string() + "\n";
-    retstring += move_to_string(prevmove);
+    std::string retstring = "State " + std::to_string(movenumber) + ": " + config->to_string();
+    retstring += "prevmove: " + move_to_string(prevmove) + "\n";
     if (all)
     {
         State* p = prevstate;
@@ -125,10 +125,8 @@ bool State::check(std::vector<std::vector<State*>>* master)
             if (i_j_state != 0)
             {
                 Config* comparison = i_j_state->get_config();
-                //std::cout << comparison->to_string();
                 if (config->normequal(comparison))
                 {
-                    //std::cout << comparison->to_string();
                     return false;
                 }
             }

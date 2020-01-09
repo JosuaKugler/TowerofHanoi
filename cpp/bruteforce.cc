@@ -46,10 +46,8 @@ void make_children_else_destroy_parents_recursively(mastertype* master, int curr
     std::vector<Move> allmoves = parent->get_config()->allpossiblemoves();
     for (size_t i = 0; i < allmoves.size(); i++)
     {
-        print(master);
-        Move currentmove = allmoves.at(i);
-        std::cout << move_to_string(&currentmove);
-        State* child = new State(parent, &currentmove);
+        Move* currentmovepointer = &(allmoves.at(i));
+        State* child = new State(parent, currentmovepointer);
         bool optimal = child->check(master);
         if (optimal)
         {

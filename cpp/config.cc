@@ -20,11 +20,7 @@ std::string move_to_string(Move* move)
     }
     else
     {
-        //debug stuff:
-        int disk = move->disk;
-        int startpeg = move->startpeg;
-        int destinationpeg = move->destinationpeg;
-        retstring = std::to_string(disk) + ": " + std::to_string(startpeg) + "->" + std::to_string(destinationpeg);
+        retstring = std::to_string(move->disk) + ": " + std::to_string(move->startpeg) + "->" + std::to_string(move->destinationpeg);
     }
     return retstring;
 }
