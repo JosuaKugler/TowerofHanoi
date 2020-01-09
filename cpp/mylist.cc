@@ -1,4 +1,5 @@
 #include "mylist.h"
+#include <string>
 
 MyList::MyList()
 {
@@ -225,14 +226,15 @@ void MyList::remove_val(int val)
     --_count;
 }
 
-void MyList::print()
+std::string MyList::to_string()
 {
-    std::cout << "[ ";
+    std::string retstring =  "[ ";
     for (MyListElem* i = _firstElem; i!=0; i = i->next)
     {
-        std::cout << i->value << " ";
+        retstring += std::to_string(i->value) + " ";
     }
-    std::cout << "]" << std::endl;
+    retstring += "]";
+    return retstring;
 }
 
 bool MyList::is_equal(MyList& list)
