@@ -5,12 +5,8 @@
 //In destructor, delete all the pointers in parent structures that may point to this instance
 //also in destructor, if object is the only child of another object, also delete the other object
 
-
-
 typedef std::vector<Move> Movevec;
 typedef std::vector<std::vector<State*>> mastertype;
-
-//std::vector<std::vector<State>> Hello;
 
 void print(mastertype* master)
 {
@@ -39,7 +35,7 @@ void master_remove(mastertype* master, int layer, int index)
     master->at(layer).at(index) = NULL;
 }
 
-void make_children_else_destroy_parents_recursively(mastertype* master, int currentlayer, int index_of_parent)
+void make_children(mastertype* master, int currentlayer, int index_of_parent)
 {
     State* parent = master->at(currentlayer).at(index_of_parent);
     //create all children of parent and add them to the next layer of master
@@ -62,22 +58,31 @@ void make_children_else_destroy_parents_recursively(mastertype* master, int curr
             delete child;
         }
     }
-    //check if there are children at all
-    if (parent->get_nextstate() == 0)
+}
+
+void newlayer(mastertype* master, int currentlayer)
+{
+    for (size_t i = 0; i < master->at(currentlayer).size(); ++i)
     {
-        master_remove(master, currentlayer, index_of_parent);
+        if (master->at(currentlayer).at(i) != 0)
+        {
+            make_children(master, currentlayer, i);
+        }
     }
 }
 
 void run()
 {
-    int maxmoves = (M(5, 3) -1)/2;
+    int maxmoves = (M(5, 3) +1)/2;
     std::vector<std::vector<State*>> realmaster(maxmoves);
     std::vector<std::vector<State*>>* master = &realmaster;
     State* first = new State(3,5);
     first->set_index(0);
     master->at(0).push_back(first);
-    make_children_else_destroy_parents_recursively(master, 0, 0);
+    for (size_t i = 0; i < maxmoves - 1; i++)
+    {
+        newlayer(master, i);
+    }
     print(master);
 }
 
