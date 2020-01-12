@@ -65,6 +65,8 @@ def h_(p,t,k):
     """
     return bk(k-p+t-2,t-1)
 
+print(h_(2,1,6))
+
 def A_(n,t,k):
     """
     helper function for adjustedUpsilon

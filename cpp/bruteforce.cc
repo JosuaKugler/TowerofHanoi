@@ -71,12 +71,12 @@ void newlayer(mastertype* master, int currentlayer)
     }
 }
 
-void run()
+void run(int pegnumber, int disknumber)
 {
-    int maxmoves = (M(5, 3) +1)/2;
+    int maxmoves = (M(disknumber, pegnumber) +1)/2;
     std::vector<std::vector<State*>> realmaster(maxmoves);
     std::vector<std::vector<State*>>* master = &realmaster;
-    State* first = new State(3,5);
+    State* first = new State(pegnumber,disknumber);
     first->set_index(0);
     master->at(0).push_back(first);
     for (size_t i = 0; i < maxmoves - 1; i++)
@@ -88,6 +88,6 @@ void run()
 
 int main()
 {
-    run();
+    run(3,10);
     return 0;
 }
