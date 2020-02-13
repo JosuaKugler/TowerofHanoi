@@ -30,8 +30,8 @@ if __name__ == "__main__":
     #visualize({"config":configurationdict})
 
     ##visualize a movelist in the form movelist = [move1, move2, ...] where one move is a list [disk, start, end]
-    #movelist = movessequence_ui(disks, pegs)[0]
-    #visualize({"movelist":[disks, pegs, movelist]})
+    movelist = movessequence_ui(disks, pegs)[0]
+    visualize({"movelist":[disks, pegs, movelist]})
 
     ##visualize and compare different movelists in the form movelists = [movelist1, movelist2, ...]
     #movelists = movessequence_ui(disks, pegs)
@@ -47,4 +47,4 @@ if __name__ == "__main__":
 
     ##get a pdf with a table of n and k containing the number of moves, the increment, the number of total possibilities, the number of possibilities with the FS-algorithm according to our adjusted recursive function or the number of possibilities with the FS-algorithm according to our bruteforceadjustedUpsilon function.
     ##Look up the suiting description in the docstring of visualization.visualize
-    visualize({"bfptable":[disks,pegs]})
+    #visualize({"bfptable":[disks,pegs]})

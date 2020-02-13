@@ -18,12 +18,13 @@ def gentikz(configurationdict):
     n = len(disklist)
     k = len(peglist)
 
-    lineslist = [r"\begin{tikzpicture}",
+    lineslist = [r"\vspace*{5cm}",
+    r"\begin{tikzpicture}",
     r"\pgfmathsetlengthmacro\diskheight{" + str(min(10, 130/n))+r"};",
     r"\pgfmathsetmacro\k{"+str(k)+r"};", #define k in latex so it is easier to read
     r"\pgfmathsetlengthmacro\step{\textwidth/\k};",#define step which is simply the width divided by k
     r"\draw[color = white] (\step/2,0) -- (\textwidth+\step,0);",#make some space at the sides
-    r"\foreach \n in {1,...,\k} \draw [fill = brown, draw = black, rounded corners = \step/20] (\step*\n,0) rectangle (\step*\n+\step/10,3);"#draw the pegs
+    r"\foreach \n in {1,...,\k} \draw [fill = brown, draw = black, rounded corners = \step/20] (\step*\n,0) rectangle (\step*\n+\step/10,4.5);"#draw the pegs
     ]
     if False:
         usable_pegs = k+1
