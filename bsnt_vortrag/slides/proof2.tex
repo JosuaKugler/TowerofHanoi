@@ -1,0 +1,16 @@
+\begin{frame}{Warum ist das so?}
+    \begin{proof}
+    \textbf{Induktionsannahme:} $M(n,3) = 2^n-1$\\
+    \textbf{Induktionsschritt:}\\\ \\
+        \begin{tabular}{l|l}
+        Schritt & benötigte Zugzahl\\
+        %\vspace{2mm}
+        \hline
+        Bewege $n$ Scheiben von Feld 1 auf Feld 2& $M(n,3) = 2^n-1$\\
+        Bewege eine Scheibe von Feld 1 auf Feld 3&1\\
+        Bewege $n$ Scheiben von Feld 2 auf Feld 3 & $M(n,3) = 2^n-1$\\
+        &\\
+        Gesamtes Umstapeln & $2^{n+1}-1$
+    \end{tabular}
+    \end{proof}
+\end{frame}

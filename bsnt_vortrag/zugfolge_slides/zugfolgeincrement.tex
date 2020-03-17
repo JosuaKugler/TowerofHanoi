@@ -1,0 +1,31 @@
+\begin{tikzpicture}
+\pgfmathsetlengthmacro\diskheight{10};
+\pgfmathsetmacro\k{5};
+\pgfmathsetlengthmacro\step{\textwidth/\k};
+\draw[color = white] (\step/2,0) -- (\textwidth+\step,0);
+\foreach \n in {1,...,\k} \draw [fill = brown, draw = black, rounded corners = \step/20] (\step*\n,0) rectangle (\step*\n+\step/10,2.5);
+\definecolor{mycolor}{rgb:hsb}{0.00,1,0.8}
+\draw [fill = mycolor, draw = black, rounded corners = \diskheight/2] (\step*1+\step/20-\step*0.49,\diskheight*0) rectangle (\step*1+\step/20+\step*0.49,\diskheight*1);
+\definecolor{mycolor}{rgb:hsb}{0.10,1,0.8}
+\draw [fill = mycolor, draw = black, rounded corners = \diskheight/2] (\step*1+\step/20-\step*0.44,\diskheight*1) rectangle (\step*1+\step/20+\step*0.44,\diskheight*2);
+\definecolor{mycolor}{rgb:hsb}{0.20,1,0.8}
+\draw [fill = mycolor, draw = black, rounded corners = \diskheight/2] (\step*1+\step/20-\step*0.39,\diskheight*2) rectangle (\step*1+\step/20+\step*0.39,\diskheight*3);
+\definecolor{mycolor}{rgb:hsb}{0.30,1,0.8}
+\draw [fill = mycolor, draw = black, rounded corners = \diskheight/2] (\step*2+\step/20-\step*0.33999999999999997,\diskheight*0) rectangle (\step*2+\step/20+\step*0.33999999999999997,\diskheight*1);
+\definecolor{mycolor}{rgb:hsb}{0.40,1,0.8}
+\draw [fill = mycolor, draw = black, rounded corners = \diskheight/2] (\step*2+\step/20-\step*0.29,\diskheight*1) rectangle (\step*2+\step/20+\step*0.29,\diskheight*2);
+\definecolor{mycolor}{rgb:hsb}{0.50,1,0.8}
+\draw [fill = mycolor, draw = black, rounded corners = \diskheight/2] (\step*2+\step/20-\step*0.24,\diskheight*2) rectangle (\step*2+\step/20+\step*0.24,\diskheight*3);
+\draw[draw = green!45!yellow, thick, rounded corners = \diskheight/4, fill = green!50!yellow,fill opacity = .3] (\step*1.5699999999999998,\diskheight*1) rectangle (\step*2.53,\diskheight*4);
+\node[above right] at (\step*1.5299999999999998,\diskheight*0.8){3};
+\node at (\step*2.05,-1){$M(3,5)=5$};
+\node at (\step*2.05,-0.5){$I(3,5)=2$};
+\definecolor{mycolor}{rgb:hsb}{0.60,1,0.8}
+\draw [fill = mycolor, draw = black, rounded corners = \diskheight/2] (\step*3+\step/20-\step*0.18999999999999995,\diskheight*0) rectangle (\step*3+\step/20+\step*0.18999999999999995,\diskheight*1);
+\definecolor{mycolor}{rgb:hsb}{0.70,1,0.8}
+\draw [fill = mycolor, draw = black, rounded corners = \diskheight/2] (\step*3+\step/20-\step*0.13999999999999996,\diskheight*1) rectangle (\step*3+\step/20+\step*0.13999999999999996,\diskheight*2);
+\draw[draw = green!45!yellow, thick, rounded corners = \diskheight/4, fill = green!50!yellow,fill opacity = .3] (\step*2.57,\diskheight*1) rectangle (\step*3.53,\diskheight*3);
+\node[above right] at (\step*2.53,\diskheight*0.8){2};
+\node at (\step*3.05,-1){$M(2,4)=3$};
+\node at (\step*3.05,-0.5){$I(2,4)=2$};
+\end{tikzpicture}

@@ -1,0 +1,14 @@
+\begin{frame}
+        \begin{itemize}
+            \item Wir verschlüsseln den Text \glqq Langer Text\grqq
+            \item Dazu wählen wir 4 Parameter: $n$, $k$, \textit{step} und \textit{movecount}
+            \item Dann verschlüsseln wir die ersten $n$ Zeichen, indem wir eine Konfiguration mit $k$ Plätzen \textit{movecount} Züge weit lösen
+        \end{itemize}
+    \begin{myexample}
+        \begin{itemize}
+            \item $n=7$, $k=4$, \textit{step} = 4, \textit{movecount} = 15
+            \item Nach der ersten Runde erhalten wir folgenden Text:\\ \glqq ner aLg\grqq + \glqq Text\grqq = \glqq ner aLgText\grqq
+            \item Nun gehen wir in diesem Text \textit{step} nach rechts und führen die gleiche Prozedur wieder durch: \glqq ner \textcolor{red}{aLgText}\grqq
+        \end{itemize}   
+    \end{myexample}
+\end{frame}

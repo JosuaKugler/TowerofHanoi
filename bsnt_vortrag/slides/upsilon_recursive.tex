@@ -1,0 +1,13 @@
+\begin{frame}{Rekursive Darstellung}
+    \[\Upsilon(1,k)=1\]
+    \[\Upsilon(n,3) = 1\]
+    {\small \begin{align*}
+        \Upsilon(n,k) 
+        =\sum  _{h_1 = \binom{\tau+k-4}{k-2}+\mathrm{max} \left(0;\ n-\binom{\tau+k-3}{\tau-1} - \binom{\tau+k-4}{\tau} \right)}
+                ^{\binom{\tau+k-4}{k-2}+\mathrm{min}\left(\binom{\tau+k-4}{\tau-1};\ n-\binom{\tau+k-3}{\tau-1}\right)}
+            \left(
+                \Upsilon(h_1,k) \cdot \Upsilon(n-h_1,k-1) 
+            \right)
+    \end{align*}
+    }
+\end{frame}

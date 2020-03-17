@@ -1,0 +1,59 @@
+\documentclass{beamer}
+\usetheme{Warsaw}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{tikz,pgf}
+\usepackage{pythontex}
+\usepackage{comment}
+
+\newtheorem{myexample}{Beispiel}
+\renewcommand{\binom}[2]{\left( \genfrac{}{}{0pt}{}{ #1 }{ #2 } \right)}
+\setbeamertemplate{footline}[frame number]
+
+\title{Die Türme von Hanoi mit variabler Feldanzahl}
+\author{BSNT 2019}
+\date{\today}
+
+\begin{document}
+\frame{\titlepage}
+\section{Einleitung}
+\input{slides/Einleitung.tex}
+\subsection{Beispiele}
+\pyc{from posterstuff import frame,gentikzincrement,nktable}
+\pyc{frame(1,3,shownumber = True)}
+\pyc{frame(2,3,shownumber = True)}
+\pyc{frame(3,3,shownumber = True)}
+\subsection{Hypothese für 3 Felder}
+\input{slides/rule.tex}
+\pyc{frame(4,3,0,7,shownumber = True)}
+\input{slides/zwischenanmerkung_4d.tex}
+\pyc{frame(4,3,7,15, shownumber = True)}
+
+\subsection{Beweis der Hypothese}
+\input{slides/proof2.tex}
+\section{Variable Feldanzahl}
+\subsection{Beispiel}
+\pyc{frame(6,4)}
+
+\subsection{Strategie}
+\input{slides/strategie.tex}
+\subsection{Beweis}
+\input{slides/proof_variable_M.tex}
+\input{slides/proof_variable_M2.tex}
+\input{slides/tables.tex}
+\input{slides/formula.tex}
+\input{slides/formula2.tex}
+\input{slides/formula3.tex}
+\section{Anzahl der Möglichkeiten}
+\subsection{Rekursive Formel}
+\input{slides/possibilities_example.tex}
+\input{slides/formula_scheme.tex}
+\input{slides/formula_scheme_2.tex}
+\input{slides/formula_restrictions.tex}
+\input{slides/upsilon_recursive.tex}
+\subsection{Vermutung explizite Darstellung}
+\input{slides/upsilon_table.tex}
+\input{slides/conjecture.tex}
+\input{slides/schluss.tex}
+\end{document}

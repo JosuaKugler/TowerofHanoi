@@ -1,0 +1,11 @@
+\begin{frame}{Strategie}
+    Wie gehen wir nun bei 4 oder mehr Feldern vor?
+    \only<23>{\ }
+    \begin{itemize}
+        \visible<1->{\item Wir stapeln einige Scheiben von Feld 0 auf Feld $j$\quad$j\in\{1,2,\dots,k-2\}$}
+        \only<2-4>{j = 1}\only<5-9>{j=2}\only<10-12>{j=3}\\
+        \visible<12->{\item Wir stapeln die größte Scheibe um\\}
+        \visible<13->{\item Wir führen alle Züge umgekehrt aus}
+    \end{itemize}
+    \pyc{frame(8,5,frame = False, height = 0.6, shownumber = True)}
+\end{frame}

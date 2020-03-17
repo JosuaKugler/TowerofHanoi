@@ -1,0 +1,13 @@
+\begin{frame}{Rekursive Darstellung}
+\begin{itemize}
+    \item Die Grenzen für $h_{1,\mathrm{min}}$ und  $h_{1, \mathrm{max}}$ liegen eigentlich bei den Grenzen des Inkrementblocks.
+    \item Allerdings gibt es noch weitere Einschränkungen für $h_{1,\mathrm{min}}$ und  $h_{1, \mathrm{max}}$.
+\end{itemize}
+\ \\
+\begin{tabular}{p{0.5\textwidth}p{0.5\textwidth}}
+    Fall 1&Fall 2
+\end{tabular}
+\scalebox{0.5}{
+    \pyc{gentikzincrement([15,5,{1:[0],2:[10,11,12,13,14], 3:[4,5,6,7,8,9], 4:[1,2,3]}])}
+    \pyc{gentikzincrement([15,5,{1:[0],2:[6,7,8,9,10,11,12,13,14], 3:[3,4,5], 4:[1,2]}])}}
+\end{frame}

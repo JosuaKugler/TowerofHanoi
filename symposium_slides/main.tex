@@ -1,0 +1,55 @@
+\documentclass{beamer}
+\usetheme{Warsaw}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{tikz,pgf}
+\usepackage{pythontex}
+\usepackage{comment}
+
+\newtheorem{myexample}{Beispiel}
+\renewcommand{\binom}[2]{\left( \genfrac{}{}{0pt}{}{ #1 }{ #2 } \right)}
+
+\title{Die Türme von Hanoi mit variabler Platzanzahl}
+\author{Heidelberger Schülersymposium 2019}
+\date{13.05.2019}
+
+\begin{document}
+\frame{\titlepage}
+\section{Einleitung}
+\input{slides/Einleitung.tex}
+\section{3 Plätze}
+\subsection{Beispiele}
+\pyc{from genlatexrainbowdevelop import frames}
+\pyc{frames(1,3)}
+\pyc{frames(2,3)}
+\pyc{frames(3,3)}
+\subsection{Hypothese für 3 Plätze}
+\input{slides/rule.tex}
+\subsection{4 Scheiben}
+\pyc{frames(4,3,0,7)}
+\input{slides/zwischenanmerkung_4d.tex}
+\pyc{frames(4,3,8,15)}
+\subsection{Beweis der Hypothese}
+\input{slides/proof.tex}
+\section{Variable Platzanzahl}
+\subsection{6 Scheiben bei 4 Plätzen}
+\pyc{frames(6,4)}
+\subsection{Strategie}
+\input{slides/strategie.tex}
+\subsection{Fragen}
+%\input{slides/fragen.tex}
+\subsection{Antworten}
+%\input{slides/Antwort1.tex}
+%\input{slides/Antwort2.tex}
+%\input{slides/Antwort3.tex}
+%\input{slides/Antwort4.tex}
+\section{Kryptographie}
+\input{slides/cryptography_start.tex}
+\pyc{frames(7,4,begin = 0, end = 15,text = "Langer ")}
+\input{slides/cryptography_firstscramble.tex}
+\pyc{frames(7,4,begin = 0, end = 15,text = "aLgText")}
+\input{slides/cryptography_secondscramble.tex}
+\input{slides/schluss.tex}
+%\pyc{frames(7,4,begin = 0, end = 15,text = "LaTner ")}
+\end{document}

@@ -1,0 +1,21 @@
+\documentclass{beamer}
+\usetheme{Warsaw}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{tikz,pgf}
+\usepackage{pythontex}
+\usepackage{comment}
+
+\newtheorem{myexample}{Beispiel}
+\renewcommand{\binom}[2]{\left( \genfrac{}{}{0pt}{}{ #1 }{ #2 } \right)}
+\setbeamertemplate{footline}[frame number]
+
+\title{Die Türme von Hanoi mit variabler Feldanzahl}
+\author{BSNT 2019}
+\date{\today}
+
+\begin{document}
+\pyc{from posterstuff import frame,gentikzincrement, nktable}
+\input{slides/strategie.tex}
+\end{document}
