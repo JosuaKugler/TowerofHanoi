@@ -3,10 +3,10 @@ pythontex-files*
 __pycache__/
 .vscode/
 *.pyc
-*.pdf
+#.pdf
 *table*.tex
 some_text_file*
-!toh_proof.pdf
+#!toh_proof.pdf
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
